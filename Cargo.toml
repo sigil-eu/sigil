@@ -1,6 +1,6 @@
 [package]
 name = "sigil-protocol"
-version = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 description = "SIGIL — Sovereign Identity-Gated Interaction Layer. An open protocol for securing AI agent-to-tool interactions."
 license = "EUPL-1.2"
@@ -23,12 +23,14 @@ ed25519-dalek = { version = "2", features = ["rand_core"] }
 rand_core = { version = "0.6", features = ["getrandom"] }
 base64ct = { version = "1", features = ["alloc"] }
 hex = "0.4"
-# Optional: live DID resolution against a SIGIL Registry instance
+# Optional: live DID resolution + community pattern fetching from a SIGIL Registry
 reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false, optional = true }
+regex = { version = "1", optional = true }
+tracing = { version = "0.1", optional = true }
 
 [features]
-# Enable verify_with_registry() — requires network access
-registry = ["dep:reqwest"]
+# Enable RemoteScanner + verify_with_registry() — requires network access
+registry = ["dep:reqwest", "dep:regex", "dep:tracing"]
 
 [dev-dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }

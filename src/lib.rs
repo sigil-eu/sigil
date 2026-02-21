@@ -23,6 +23,7 @@ pub mod audit;
 pub mod identity;
 pub mod mcp_server;
 pub mod policy;
+pub mod registry;
 pub mod scanner;
 pub mod sigil_envelope;
 pub mod vault;
@@ -34,3 +35,7 @@ pub use policy::{RiskLevel, SecurityPolicy};
 pub use scanner::SensitivityScanner;
 pub use sigil_envelope::{SigilEnvelope, SigilKeypair, Verdict};
 pub use vault::{VaultEntry, VaultProvider};
+
+// Re-export registry types (only when the `registry` feature is enabled)
+#[cfg(feature = "registry")]
+pub use registry::RemoteScanner;
