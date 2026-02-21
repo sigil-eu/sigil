@@ -64,7 +64,7 @@ pub struct IdentityBinding {
 /// # Example
 ///
 /// ```rust,no_run
-/// use sigil::{IdentityProvider, IdentityBinding, TrustLevel};
+/// use sigil_protocol::{IdentityProvider, IdentityBinding, TrustLevel};
 ///
 /// struct LdapIdentity { /* ... */ }
 ///

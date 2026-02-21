@@ -12,7 +12,7 @@
 /// # Example
 ///
 /// ```rust
-/// use sigil::SensitivityScanner;
+/// use sigil_protocol::SensitivityScanner;
 ///
 /// struct RegexScanner { /* ... */ }
 ///

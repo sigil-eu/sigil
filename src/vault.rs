@@ -33,7 +33,7 @@ pub struct VaultEntry {
 /// # Example
 ///
 /// ```rust,no_run
-/// use sigil::{VaultProvider, VaultEntry};
+/// use sigil_protocol::{VaultProvider, VaultEntry};
 ///
 /// struct HsmVault { /* HSM connection */ }
 ///

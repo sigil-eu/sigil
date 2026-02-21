@@ -2,8 +2,8 @@
 //!
 //! Run with: `cargo run --example basic_mcp_server`
 
-use sigil::mcp_server::{SigilMcpServer, ToolDef};
-use sigil::{AuditEvent, AuditLogger, SensitivityScanner, TrustLevel};
+use sigil_protocol::mcp_server::{SigilMcpServer, ToolDef};
+use sigil_protocol::{AuditEvent, AuditLogger, SensitivityScanner, TrustLevel};
 use std::sync::Arc;
 
 // ── Custom Scanner ──────────────────────────────────────────────

@@ -4,8 +4,8 @@
 //! application can use to expose SIGIL-protected tools over JSON-RPC 2.0.
 //!
 //! ```rust,no_run
-//! use sigil::mcp_server::{SigilMcpServer, ToolDef};
-//! use sigil::{SensitivityScanner, AuditLogger, AuditEvent};
+//! use sigil_protocol::mcp_server::{SigilMcpServer, ToolDef};
+//! use sigil_protocol::{SensitivityScanner, AuditLogger, AuditEvent};
 //! use std::sync::Arc;
 //!
 //! struct MyScanner;

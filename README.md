@@ -8,8 +8,8 @@
 <p align="center">
   <a href="https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12"><img src="https://img.shields.io/badge/license-EUPL%20v1.2-blue.svg" alt="License"></a>
   <a href="https://github.com/MyMolt/sigil/actions"><img src="https://github.com/MyMolt/sigil/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://crates.io/crates/sigil"><img src="https://img.shields.io/crates/v/sigil.svg" alt="crates.io"></a>
-  <a href="https://docs.rs/sigil"><img src="https://docs.rs/sigil/badge.svg" alt="docs.rs"></a>
+  <a href="https://crates.io/crates/sigil-protocol"><img src="https://img.shields.io/crates/v/sigil-protocol.svg" alt="crates.io"></a>
+  <a href="https://docs.rs/sigil-protocol"><img src="https://docs.rs/sigil-protocol/badge.svg" alt="docs.rs"></a>
 </p>
 
 ---
@@ -64,13 +64,13 @@ Plus a **reference MCP server** (`SigilMcpServer`) that wraps any tool set with 
 
 ```toml
 [dependencies]
-sigil = "0.1"
+sigil-protocol = "0.1"
 ```
 
 ### Implement a Scanner
 
 ```rust
-use sigil::SensitivityScanner;
+use sigil_protocol::SensitivityScanner;
 
 struct MyScanner;
 
@@ -88,7 +88,7 @@ impl SensitivityScanner for MyScanner {
 ### Secure an MCP Server (4 lines)
 
 ```rust
-use sigil::mcp_server::{SigilMcpServer, ToolDef};
+use sigil_protocol::mcp_server::{SigilMcpServer, ToolDef};
 use std::sync::Arc;
 
 let scanner = Arc::new(MyScanner);
@@ -112,7 +112,7 @@ let response = server.handle_request(json_rpc_request, caller_trust).await;
 ### Trust-Gate Sensitive Tools
 
 ```rust
-use sigil::TrustLevel;
+use sigil_protocol::TrustLevel;
 
 // This tool requires eIDAS-verified identity
 server.register_tool_with_trust(banking_tool, TrustLevel::High);

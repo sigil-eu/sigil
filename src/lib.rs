@@ -15,7 +15,7 @@
 //! ## Quick Start
 //!
 //! ```rust,no_run
-//! use sigil::{SensitivityScanner, AuditLogger, IdentityProvider, SecurityPolicy};
+//! use sigil_protocol::{SensitivityScanner, AuditLogger, IdentityProvider, SecurityPolicy};
 //! // Implement these traits with your own backends
 //! ```
 

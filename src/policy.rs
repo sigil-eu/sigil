@@ -45,7 +45,7 @@ impl std::fmt::Display for RiskLevel {
 /// # Example
 ///
 /// ```rust,no_run
-/// use sigil::{SecurityPolicy, RiskLevel};
+/// use sigil_protocol::{SecurityPolicy, RiskLevel};
 ///
 /// struct StrictPolicy;
 ///
