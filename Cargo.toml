@@ -1,12 +1,12 @@
 [package]
 name = "sigil-protocol"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "SIGIL — Sovereign Identity-Gated Interaction Layer. An open protocol for securing AI agent-to-tool interactions."
 license = "EUPL-1.2"
-repository = "https://github.com/MyMolt/sigil"
-homepage = "https://github.com/MyMolt/sigil"
-documentation = "https://docs.rs/sigil"
+repository = "https://github.com/sigil-eu/sigil"
+homepage = "https://sigil-protocol.org"
+documentation = "https://docs.rs/sigil-protocol"
 readme = "README.md"
 keywords = ["security", "identity", "agent", "mcp", "protocol"]
 categories = ["authentication", "cryptography"]

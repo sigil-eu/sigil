@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12"><img src="https://img.shields.io/badge/license-EUPL%20v1.2-blue.svg" alt="License"></a>
-  <a href="https://github.com/MyMolt/sigil/actions"><img src="https://github.com/MyMolt/sigil/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/sigil-eu/sigil/actions"><img src="https://github.com/sigil-eu/sigil/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://crates.io/crates/sigil-protocol"><img src="https://img.shields.io/crates/v/sigil-protocol.svg" alt="crates.io"></a>
   <a href="https://docs.rs/sigil-protocol"><img src="https://docs.rs/sigil-protocol/badge.svg" alt="docs.rs"></a>
 </p>
