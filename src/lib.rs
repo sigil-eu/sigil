@@ -21,6 +21,7 @@
 
 pub mod audit;
 pub mod identity;
+pub mod mcp_server;
 pub mod policy;
 pub mod scanner;
 pub mod vault;

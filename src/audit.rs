@@ -27,6 +27,8 @@ pub enum AuditEventType {
     SigilInterception,
     /// An MCP tool call was gated.
     McpToolGated,
+    /// An agent-to-agent delegation boundary was crossed.
+    DelegationCrossing,
 }
 
 /// Actor — who performed the action.
@@ -196,7 +198,8 @@ mod tests {
             AuditEventType::SecurityEvent,
             AuditEventType::SigilInterception,
             AuditEventType::McpToolGated,
+            AuditEventType::DelegationCrossing,
         ];
-        assert_eq!(types.len(), 9);
+        assert_eq!(types.len(), 10);
     }
 }

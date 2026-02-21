@@ -8,16 +8,18 @@ use serde::{Deserialize, Serialize};
 
 /// Trust level for identity bindings.
 ///
-/// The SIGIL protocol defines two tiers:
-/// - `Low` — basic verification (email, OIDC, social login)
+/// The SIGIL protocol defines three tiers:
+/// - `Low` — anonymous or unverified
+/// - `Medium` — verified identity (email, OIDC, social login)
 /// - `High` — strong verification (eIDAS, government ID, hardware key)
 ///
-/// Implementations may map these to more granular levels internally,
-/// but inter-system communication uses these two tiers.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+/// Numeric ordering is used for comparison: Low(1) < Medium(2) < High(3).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum TrustLevel {
-    /// Basic verification (email, OIDC, social login).
+    /// Anonymous or unverified user.
     Low = 1,
+    /// Verified identity (email, OIDC, social login).
+    Medium = 2,
     /// Strong verification (eIDAS, government ID, hardware key).
     High = 3,
 }
@@ -32,6 +34,7 @@ impl std::fmt::Display for TrustLevel {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             TrustLevel::Low => write!(f, "Low (Level 1)"),
+            TrustLevel::Medium => write!(f, "Medium (Level 2)"),
             TrustLevel::High => write!(f, "High (Level 3)"),
         }
     }

@@ -1,21 +1,64 @@
-# SIGIL — Sovereign Identity-Gated Interaction Layer
+<p align="center">
+  <strong>🔐 SIGIL</strong>
+</p>
 
-An open protocol for securing AI agent-to-tool interactions with identity binding, content interception, and tamper-evident audit trails.
+<h3 align="center">Sovereign Identity-Gated Interaction Layer</h3>
+<p align="center">The missing security layer for AI agent-to-tool interactions.</p>
 
-## Why SIGIL?
+<p align="center">
+  <a href="https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12"><img src="https://img.shields.io/badge/license-EUPL%20v1.2-blue.svg" alt="License"></a>
+  <a href="https://github.com/MyMolt/sigil/actions"><img src="https://github.com/MyMolt/sigil/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://crates.io/crates/sigil"><img src="https://img.shields.io/crates/v/sigil.svg" alt="crates.io"></a>
+  <a href="https://docs.rs/sigil"><img src="https://docs.rs/sigil/badge.svg" alt="docs.rs"></a>
+</p>
 
-AI agents increasingly execute real-world actions — reading emails, accessing databases, managing files. Standard protocols like MCP provide no built-in security layer for these interactions. SIGIL fills this gap.
+---
+
+## The Problem
+
+AI agents execute real-world actions — reading emails, querying databases, sending money. The dominant protocol for this (MCP) has **no built-in security layer**:
+
+- ❌ No identity verification for tool calls
+- ❌ No content scanning for sensitive data
+- ❌ No audit trail
+- ❌ No permission gating
+
+**SIGIL fills this gap.**
 
 ## What SIGIL Provides
 
-| Component | Purpose |
-|-----------|---------|
-| **Identity** | Bind users to verifiable trust levels (OIDC, eIDAS, SSI) |
-| **Scanner** | Detect sensitive content before it enters agent context |
-| **Vault** | Encrypt and store intercepted secrets with opaque pointers |
-| **Audit** | Tamper-evident logging of all security events |
-| **Policy** | Gate actions by risk level, rate, and authorization |
-| **MCP Bridge** | Extend Model Context Protocol with SIGIL security envelope |
+SIGIL defines 5 traits (interfaces) that any agent system can implement:
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   SIGIL Envelope                     │
+│                                                      │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐          │
+│  │ Identity │  │ Scanner  │  │  Policy  │          │
+│  │ Provider │  │          │  │          │          │
+│  └────┬─────┘  └────┬─────┘  └────┬─────┘          │
+│       │              │              │                │
+│       ▼              ▼              ▼                │
+│  ┌──────────────────────────────────────────┐       │
+│  │              Audit Logger                 │       │
+│  └──────────────────────────────────────────┘       │
+│                      │                               │
+│                      ▼                               │
+│  ┌──────────────────────────────────────────┐       │
+│  │           Vault Provider                  │       │
+│  └──────────────────────────────────────────┘       │
+└─────────────────────────────────────────────────────┘
+```
+
+| Trait | Purpose |
+| --- | --- |
+| `IdentityProvider` | Bind users to verifiable trust levels (OIDC, eIDAS, SSI) |
+| `SensitivityScanner` | Detect secrets, PII, financial data before they reach the LLM |
+| `VaultProvider` | Encrypt and store intercepted sensitive content |
+| `AuditLogger` | Tamper-evident logging of every security event |
+| `SecurityPolicy` | Gate actions by risk level, rate, and authorization |
+
+Plus a **reference MCP server** (`SigilMcpServer`) that wraps any tool set with all five layers.
 
 ## Quick Start
 
@@ -24,39 +67,107 @@ AI agents increasingly execute real-world actions — reading emails, accessing 
 sigil = "0.1"
 ```
 
-```rust
-use sigil::{SensitivityScanner, VaultProvider, AuditLogger, IdentityProvider, SecurityPolicy};
+### Implement a Scanner
 
-// Implement these traits with your own backends
+```rust
+use sigil::SensitivityScanner;
+
 struct MyScanner;
+
 impl SensitivityScanner for MyScanner {
     fn scan(&self, text: &str) -> Option<String> {
-        // Your detection logic here
-        None
+        if text.contains("sk-") {
+            Some("API Key".into())
+        } else {
+            None
+        }
     }
 }
 ```
 
-## Adoption Examples
+### Secure an MCP Server (4 lines)
 
-SIGIL is designed to integrate with any agent framework:
+```rust
+use sigil::mcp_server::{SigilMcpServer, ToolDef};
+use std::sync::Arc;
 
-| Platform | How SIGIL Helps |
-|----------|----------------|
-| **MCP Hosts** (Claude Desktop, Cursor, etc.) | Add `_sigil` envelope to tool calls for identity-gated, audited execution |
-| **LangChain / LlamaIndex** | Wrap tool executors with SIGIL scanner + policy gate |
-| **Enterprise Agents** | Enforce eIDAS/LDAP identity verification before sensitive operations |
-| **Banking / Healthcare** | Define domain-specific `SensitivityScanner` for PII, PHI, financial data |
-| **Self-hosted AI** (Ollama, vLLM) | Add SIGIL audit trail to local LLM tool usage |
-| **MyMolt** | Reference implementation with full SIGIL stack |
+let scanner = Arc::new(MyScanner);
+let audit = Arc::new(MyAuditLogger::new());
+let mut server = SigilMcpServer::new("my-tools", "1.0", scanner, audit);
+
+server.register_tool(ToolDef {
+    name: "read_email".into(),
+    description: "Read user emails".into(),
+    parameters_schema: serde_json::json!({"type": "object"}),
+    handler: Box::new(|args| Box::pin(async move {
+        // Your tool logic — SIGIL scans input AND output automatically
+        Ok(serde_json::json!({"emails": []}))
+    })),
+});
+
+// Every tool call is now identity-gated, scanned, and audited
+let response = server.handle_request(json_rpc_request, caller_trust).await;
+```
+
+### Trust-Gate Sensitive Tools
+
+```rust
+use sigil::TrustLevel;
+
+// This tool requires eIDAS-verified identity
+server.register_tool_with_trust(banking_tool, TrustLevel::High);
+
+// Low-trust caller tries to use it → DENIED + audit logged
+```
+
+## MCP Extension
+
+SIGIL extends MCP JSON-RPC with a `_sigil` metadata field:
+
+```json
+{
+  "method": "tools/call",
+  "params": { "name": "read_email", "arguments": {} },
+  "_sigil": {
+    "identity": "eidas:DE/123456789",
+    "trust_level": "High",
+    "policy_approved": true,
+    "audit_id": "550e8400-e29b-41d4-a716-446655440000"
+  }
+}
+```
+
+Responses are scanned automatically:
+
+```json
+{
+  "result": {
+    "content": [{ "text": "Email from bank: [SIGIL-VAULT: IBAN — Access Required]" }]
+  },
+  "_sigil": { "scanned": true, "interceptions": 1 }
+}
+```
 
 ## Conformance Levels
 
 | Level | Requirements | Use Case |
-|-------|-------------|----------|
-| **SIGIL-Core** | Identity + Audit | Minimum conformance — who did what, when |
+| --- | --- | --- |
+| **SIGIL-Core** | Identity + Audit | Minimum — who did what, when |
 | **SIGIL-Guard** | Core + Scanner + Vault | Full interception — sensitive data never leaks |
-| **SIGIL-MCP** | Guard + MCP bridge | Agent tool security — every tool call is gated |
+| **SIGIL-MCP** | Guard + MCP Server | Agent tool security — every tool call is gated |
+
+## Adoption
+
+SIGIL integrates with any agent framework:
+
+| Platform | Integration |
+| --- | --- |
+| **MCP Hosts** (Claude Desktop, Cursor) | Add `_sigil` envelope to tool calls |
+| **LangChain / LlamaIndex** | Wrap tool executors with SIGIL policy gate |
+| **Enterprise agents** | Enforce eIDAS/LDAP identity before sensitive operations |
+| **Banking / Healthcare** | Domain-specific `SensitivityScanner` for PII, PHI |
+| **Self-hosted AI** (Ollama, vLLM) | Add audit trails to local LLM tool usage |
+| **[MyMolt](https://github.com/beykuet/MyMolt)** | Reference implementation (SIGIL-MCP conformant) |
 
 ## Specification
 
@@ -68,4 +179,6 @@ SIGIL is designed to integrate with any agent framework:
 
 ## License
 
-EUPL-1.2 — [European Union Public Licence v. 1.2](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12)
+**EUPL-1.2** — [European Union Public Licence v. 1.2](https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12)
+
+SIGIL is OSI-approved open source. You can use it as a library dependency in any project — including proprietary ones. Only modifications to SIGIL itself must be shared back.
