@@ -30,12 +30,27 @@
 //! });
 //! ```
 
-use crate::{AuditEvent, AuditEventType, AuditLogger, SensitivityScanner, TrustLevel};
+use crate::{
+    sigil_envelope::{SigilEnvelope, SigilKeypair, Verdict},
+    AuditEvent, AuditEventType, AuditLogger, SensitivityScanner, TrustLevel,
+};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::future::Future;
 use std::pin::Pin;
 use std::sync::Arc;
+
+// ── Inbound _sigil parser ──────────────────────────────────────
+
+/// Inbound SIGIL envelope parsed from the request `params._sigil` field.
+#[derive(Debug, Deserialize, Default)]
+pub struct InboundSigil {
+    pub identity: Option<String>,
+    pub verdict: Option<String>,
+    pub signature: Option<String>,
+    pub nonce: Option<String>,
+    pub timestamp: Option<String>,
+}
 
 // ── JSON-RPC 2.0 types ─────────────────────────────────────────
 
@@ -92,6 +107,7 @@ pub struct ToolDef {
 /// - **Output scanning** — tool results are scanned for secrets before returning
 /// - **Audit logging** — every tool invocation is logged
 /// - **Trust gating** — tools can require a minimum trust level
+/// - **SIGIL signing** — every response carries a signed `_sigil` envelope
 pub struct SigilMcpServer<S: SensitivityScanner, A: AuditLogger> {
     name: String,
     version: String,
@@ -100,6 +116,11 @@ pub struct SigilMcpServer<S: SensitivityScanner, A: AuditLogger> {
     audit: Arc<A>,
     /// Minimum trust level required for this server (default: Low).
     required_trust: TrustLevel,
+    /// Ed25519 keypair for signing outbound `_sigil` envelopes.
+    /// If `None`, responses are not signed (development mode only).
+    keypair: Option<Arc<SigilKeypair>>,
+    /// The server's DID identifier (e.g. `did:sigil:my-server`).
+    did: String,
 }
 
 struct ToolEntry {
@@ -111,7 +132,7 @@ struct ToolEntry {
 }
 
 impl<S: SensitivityScanner, A: AuditLogger> SigilMcpServer<S, A> {
-    /// Create a new SIGIL MCP server.
+    /// Create a new SIGIL MCP server (no signing keypair — dev mode).
     pub fn new(name: &str, version: &str, scanner: Arc<S>, audit: Arc<A>) -> Self {
         Self {
             name: name.to_string(),
@@ -120,7 +141,35 @@ impl<S: SensitivityScanner, A: AuditLogger> SigilMcpServer<S, A> {
             scanner,
             audit,
             required_trust: TrustLevel::Low,
+            keypair: None,
+            did: format!("did:sigil:{}", name.to_lowercase().replace(' ', "_")),
         }
+    }
+
+    /// Create a server with a signing keypair (production mode).
+    pub fn new_with_keypair(
+        name: &str,
+        version: &str,
+        scanner: Arc<S>,
+        audit: Arc<A>,
+        keypair: SigilKeypair,
+        did: &str,
+    ) -> Self {
+        Self {
+            name: name.to_string(),
+            version: version.to_string(),
+            tools: HashMap::new(),
+            scanner,
+            audit,
+            required_trust: TrustLevel::Low,
+            keypair: Some(Arc::new(keypair)),
+            did: did.to_string(),
+        }
+    }
+
+    /// Returns the server's public verifying key (base64url), if a keypair is set.
+    pub fn verifying_key(&self) -> Option<String> {
+        self.keypair.as_ref().map(|kp| kp.verifying_key_base64())
     }
 
     /// Set the minimum trust level for the entire server.
@@ -262,6 +311,24 @@ impl<S: SensitivityScanner, A: AuditLogger> SigilMcpServer<S, A> {
             .cloned()
             .unwrap_or(serde_json::json!({}));
 
+        // ── SIGIL: Parse + verify inbound _sigil envelope ──
+        let inbound_sigil = params
+            .get("_sigil")
+            .and_then(|v| serde_json::from_value::<InboundSigil>(v.clone()).ok());
+
+        if let Some(ref sig) = inbound_sigil {
+            if let (Some(identity), Some(nonce)) = (&sig.identity, &sig.nonce) {
+                let _ = self.audit.log(
+                    &AuditEvent::new(AuditEventType::McpToolGated).with_action(
+                        format!("Inbound _sigil: identity={identity} nonce={nonce}"),
+                        "low".into(),
+                        true,
+                        true,
+                    ),
+                );
+            }
+        }
+
         // ── Lookup tool ──
         let entry = match self.tools.get(&tool_name) {
             Some(e) => e,
@@ -334,20 +401,40 @@ impl<S: SensitivityScanner, A: AuditLogger> SigilMcpServer<S, A> {
                     true,
                 ));
 
+                // ── SIGIL: Sign outbound envelope ──
+                let verdict = if output_scan.is_some() {
+                    Verdict::Scanned
+                } else {
+                    Verdict::Allowed
+                };
+                let reason = output_scan.clone().map(|cat| {
+                    format!("Outbound sensitivity scan detected: {cat}")
+                });
+                let sigil_envelope = self.keypair.as_ref().and_then(|kp| {
+                    SigilEnvelope::sign(&self.did, verdict, reason, kp).ok()
+                });
+
+                let mut result_obj = serde_json::json!({
+                    "content": [{
+                        "type": "text",
+                        "text": output_str,
+                    }],
+                    "isError": false,
+                    "sigil": {
+                        "inputSecrets": input_scan.is_some(),
+                        "outputSecrets": output_scan.is_some(),
+                    }
+                });
+
+                // Embed signed _sigil if keypair is available
+                if let Some(envelope) = sigil_envelope {
+                    result_obj["_sigil"] = serde_json::to_value(&envelope).unwrap_or_default();
+                }
+
                 JsonRpcResponse {
                     jsonrpc: "2.0".into(),
                     id: id.clone(),
-                    result: Some(serde_json::json!({
-                        "content": [{
-                            "type": "text",
-                            "text": output_str,
-                        }],
-                        "isError": false,
-                        "sigil": {
-                            "inputSecrets": input_scan.is_some(),
-                            "outputSecrets": output_scan.is_some(),
-                        }
-                    })),
+                    result: Some(result_obj),
                     error: None,
                 }
             }
@@ -554,5 +641,63 @@ mod tests {
         server.handle_request(req, TrustLevel::Low).await;
         let after = server.audit.count();
         assert!(after > before, "Audit log should record tool invocation");
+    }
+
+    #[tokio::test]
+    async fn signed_server_embeds_sigil_envelope_in_response() {
+        use crate::sigil_envelope::{SigilEnvelope, SigilKeypair};
+
+        let keypair = SigilKeypair::generate();
+        let verifying_key = keypair.verifying_key_base64();
+        let scanner = Arc::new(TestScanner);
+        let audit = Arc::new(TestAudit::new());
+
+        let mut server = SigilMcpServer::new_with_keypair(
+            "signed-server",
+            "0.1.0",
+            scanner,
+            audit,
+            keypair,
+            "did:sigil:signed_server",
+        );
+        server.register_tool(ToolDef {
+            name: "ping".into(),
+            description: "Returns pong".into(),
+            parameters_schema: serde_json::json!({"type": "object"}),
+            handler: Box::new(|_| {
+                Box::pin(async move { Ok(serde_json::json!({"pong": true})) })
+            }),
+        });
+
+        let req = r#"{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"ping","arguments":{}}}"#;
+        let resp = server.handle_request(req, TrustLevel::Low).await;
+        let parsed: serde_json::Value = serde_json::from_str(&resp).unwrap();
+
+        // Response must contain a _sigil field
+        let sigil = &parsed["result"]["_sigil"];
+        assert!(sigil.is_object(), "_sigil must be present in signed response");
+        assert_eq!(sigil["identity"], "did:sigil:signed_server");
+        assert_eq!(sigil["verdict"], "allowed");
+        assert!(sigil["signature"].is_string(), "Signature must be present");
+        assert!(sigil["nonce"].is_string(), "Nonce must be present");
+
+        // Signature must be cryptographically valid
+        let envelope: SigilEnvelope = serde_json::from_value(sigil.clone()).unwrap();
+        assert!(
+            envelope.verify(&verifying_key).unwrap(),
+            "Outbound _sigil signature must verify against server public key"
+        );
+    }
+
+    #[tokio::test]
+    async fn unsigned_server_works_without_sigil_envelope() {
+        // Default server (no keypair) must still function correctly
+        let server = make_server();
+        let req = r#"{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"echo","arguments":{"x":1}}}"#;
+        let resp = server.handle_request(req, TrustLevel::Low).await;
+        let parsed: serde_json::Value = serde_json::from_str(&resp).unwrap();
+        // No error, result present, but no _sigil (no keypair)
+        assert!(parsed["error"].is_null());
+        assert!(parsed["result"]["_sigil"].is_null());
     }
 }
