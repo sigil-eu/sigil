@@ -196,12 +196,13 @@ impl SigilEnvelope {
     ///
     /// # Example
     ///
-    /// ```rust,ignore
-    /// let result = envelope
-    ///     .verify_with_registry("https://registry.sigil-protocol.org")
-    ///     .await?;
-    /// assert!(result.valid);
-    /// assert_eq!(result.status, "active");
+    /// ```rust,no_run
+    /// # tokio_test::block_on(async {
+    /// // Assumes envelope was previously signed with a registered DID keypair
+    /// // let result = envelope.verify_with_registry("https://registry.sigil-protocol.org").await?;
+    /// // assert!(result.valid);
+    /// // assert_eq!(result.status, "active");
+    /// # })
     /// ```
     #[cfg(feature = "registry")]
     pub async fn verify_with_registry(
@@ -306,6 +307,7 @@ pub struct RegistryVerifyResult {
 
 // ── URL encoding helper (no dep needed) ──────────────────────────────────────
 
+#[cfg(feature = "registry")]
 fn urlencoding_encode(s: &str) -> String {
     s.chars()
         .flat_map(|c| match c {
@@ -565,5 +567,92 @@ mod tests {
         let kp1 = SigilKeypair::from_seed(&seed);
         let kp2 = SigilKeypair::from_seed(&seed);
         assert_eq!(kp1.verifying_key_base64(), kp2.verifying_key_base64());
+    }
+
+    // ── Live integration tests ─────────────────────────────────────────────────
+    // These tests hit the live SIGIL Registry at registry.sigil-protocol.org.
+    // They are marked #[ignore] so they do NOT run in normal `cargo test`.
+    // Run them explicitly with:
+    //   cargo test --features registry -- --ignored
+    //   cargo test --features registry live_ -- --ignored --nocapture
+
+    /// Verify the live registry health endpoint is reachable.
+    #[cfg(feature = "registry")]
+    #[tokio::test]
+    #[ignore = "requires network access to registry.sigil-protocol.org"]
+    async fn live_registry_health_check() {
+        let resp = reqwest::get("https://registry.sigil-protocol.org/health")
+            .await
+            .expect("Registry should be reachable");
+        assert!(resp.status().is_success(), "Health check should return 200");
+        let body: serde_json::Value = resp.json().await.unwrap();
+        assert_eq!(body["status"], "ok");
+        assert_eq!(body["service"], "sigil-registry");
+        println!("Registry version: {}", body["version"]);
+    }
+
+    /// Full end-to-end round-trip:
+    /// 1. Generate a fresh Ed25519 keypair
+    /// 2. Register it with the live SIGIL Registry
+    /// 3. Sign an envelope with the private key
+    /// 4. Verify the envelope against the live registry (public key resolved remotely)
+    #[cfg(feature = "registry")]
+    #[tokio::test]
+    #[ignore = "requires network access and writes to registry.sigil-protocol.org"]
+    async fn live_sign_register_and_verify_with_registry() {
+        use crate::sigil_envelope::{SigilEnvelope, SigilKeypair, Verdict};
+
+        let test_id = format!(
+            "did:sigil:test_{}",
+            &hex::encode({
+                use rand_core::RngCore;
+                let mut b = [0u8; 4];
+                rand_core::OsRng.fill_bytes(&mut b);
+                b
+            })
+        );
+
+        // 1. Generate a fresh keypair
+        let kp = SigilKeypair::generate();
+        let public_key = kp.verifying_key_base64();
+
+        // 2. Register the DID with the live registry
+        let client = reqwest::Client::new();
+        let reg_resp = client
+            .post("https://registry.sigil-protocol.org/register")
+            .json(&serde_json::json!({
+                "did": test_id,
+                "public_key": public_key,
+                "namespace": "test",
+                "label": "Live integration test — auto-generated"
+            }))
+            .send()
+            .await
+            .expect("Register request should succeed");
+
+        assert_eq!(
+            reg_resp.status(),
+            reqwest::StatusCode::CREATED,
+            "DID registration should return 201"
+        );
+        println!("Registered: {test_id}");
+
+        // 3. Sign an envelope using the private key
+        let envelope = SigilEnvelope::sign(&test_id, Verdict::Allowed, None, &kp)
+            .expect("Signing should succeed");
+
+        // 4. Verify end-to-end against the live registry
+        let result = envelope
+            .verify_with_registry("https://registry.sigil-protocol.org")
+            .await
+            .expect("verify_with_registry should not error");
+
+        assert!(
+            result.valid,
+            "Live round-trip verification failed: {:?}",
+            result.reason
+        );
+        assert_eq!(result.status, "active");
+        println!("✅ Live end-to-end verification passed for {test_id}");
     }
 }
