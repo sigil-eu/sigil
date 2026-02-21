@@ -24,6 +24,7 @@ pub mod identity;
 pub mod mcp_server;
 pub mod policy;
 pub mod scanner;
+pub mod sigil_envelope;
 pub mod vault;
 
 // Re-export core types
@@ -31,4 +32,5 @@ pub use audit::{AuditEvent, AuditEventType, AuditLogger};
 pub use identity::{IdentityBinding, IdentityProvider, TrustLevel};
 pub use policy::{RiskLevel, SecurityPolicy};
 pub use scanner::SensitivityScanner;
+pub use sigil_envelope::{SigilEnvelope, SigilKeypair, Verdict};
 pub use vault::{VaultEntry, VaultProvider};
