@@ -9,8 +9,9 @@
   <a href="https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12"><img src="https://img.shields.io/badge/license-EUPL%20v1.2-blue.svg" alt="License EUPL-1.2"></a>
   <a href="https://github.com/sigil-eu/sigil/blob/main/LICENSE-COMMERCIAL"><img src="https://img.shields.io/badge/license-Commercial-orange.svg" alt="Commercial License"></a>
   <a href="https://github.com/sigil-eu/sigil/actions"><img src="https://github.com/sigil-eu/sigil/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://crates.io/crates/sigil-protocol"><img src="https://img.shields.io/crates/v/sigil-protocol.svg" alt="crates.io"></a>
+  <a href="https://crates.io/crates/sigil-protocol"><img src="https://img.shields.io/badge/crates.io-sigil--protocol-orange.svg" alt="crates.io"></a>
   <a href="https://docs.rs/sigil-protocol"><img src="https://docs.rs/sigil-protocol/badge.svg" alt="docs.rs"></a>
+  <img src="https://img.shields.io/badge/Patent%20Pending-%F0%9F%87%A9%F0%9F%87%AA%20DE%20Gebrauchsmuster-blueviolet.svg" alt="Patent Pending DE">
 </p>
 
 ---
@@ -275,3 +276,14 @@ SIGIL Protocol is **dual-licensed**:
 > **Note:** Using SIGIL as a library dependency in a proprietary project
 > does NOT automatically require a commercial licence, provided you do not
 > modify and redistribute SIGIL itself in closed-source form.
+
+---
+
+## Patent
+
+**Patent Pending** — German Utility Model (*Gebrauchsmuster*) filed with the DPMA.
+
+> Priority date: **2026-02-23** · Applicant: Benjamin Küttner  
+> Invention: *Modular Security Protocol for Identity Binding, Rule-Based Content Redaction and Tamper-Evident Audit Logging in Networked Systems (SIGIL — Sovereign Identity-Gated Interaction Layer)*
+
+See [`PATENT-PRIORITY.md`](../PATENT-PRIORITY.md) for full priority documentation.

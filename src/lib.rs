@@ -1,3 +1,8 @@
+// SPDX-License-Identifier: EUPL-1.2
+// Copyright (c) 2026 Benjamin Küttner <benjamin.kuettner@icloud.com>
+// Patent Pending — DE Gebrauchsmuster, filed 2026-02-23
+// See PATENT-PRIORITY.md for full priority documentation.
+
 //! # SIGIL — Sovereign Identity-Gated Interaction Layer
 //!
 //! An open protocol for securing AI agent-to-tool interactions.
