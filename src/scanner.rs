@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: EUPL-1.2
+// Copyright (c) 2026 Benjamin Küttner <benjamin.kuettner@icloud.com>
+// Patent Pending — DE Gebrauchsmuster, filed 2026-02-23
+
 //! Sensitivity scanning — detect sensitive content before it enters agent context.
 //!
 //! SIGIL defines the trait; implementations choose their detection strategy

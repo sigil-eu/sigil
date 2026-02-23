@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: EUPL-1.2
+// Copyright (c) 2026 Benjamin Küttner <benjamin.kuettner@icloud.com>
+// Patent Pending — DE Gebrauchsmuster, filed 2026-02-23
+
 //! SIGIL Envelope — per-message DID-bound cryptographic signing.
 //!
 //! Implements the `_sigil` envelope as defined in the SIGIL Protocol

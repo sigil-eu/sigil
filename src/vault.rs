@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: EUPL-1.2
+// Copyright (c) 2026 Benjamin Küttner <benjamin.kuettner@icloud.com>
+// Patent Pending — DE Gebrauchsmuster, filed 2026-02-23
+
 //! Vault — encrypted storage for intercepted secrets.
 //!
 //! SIGIL defines the envelope format and provider trait.
