@@ -1,10 +1,15 @@
 # PATENT — SIGIL-SERVICEBRIDGE
 
-## DE Gebrauchsmuster — Service-Asset-Treuhand mit Schlichter-Disputing und HMAC-Protokollkette
+## DE Gebrauchsmuster · DID-gebundener Dienstleistungs-Treuhand mit deterministischer Schlichtung
+
+## GBM-4 der SIGIL-Patentfamilie
 
 **Anmeldedatum:** 2026-02-25
 **Anmelder:** Benjamin Küttner, [Adresse eintragen]
-**Priorität:** Fortführung DE Gebrauchsmuster SIGIL Protocol (2026-02-22) + SIGIL-BRIDGE-CORE (2026-02-25)
+**Priorität / Stammanmeldungen:**
+
+- GBM-0: DE Gebrauchsmuster SIGIL Protocol, eingereicht DPMA 2026-02-23
+- GBM-1: DE Gebrauchsmuster SIGIL-Bridge-Core, eingereicht 2026-02-25 (gleichzeitig)
 **Lizenz:** EUPL-1.2 + Kommerzielle Lizenz
 
 ---
@@ -13,11 +18,11 @@
 
 **An:** Deutsches Patent- und Markenamt, 80297 München
 
-Betreff: Anmeldung eines Gebrauchsmusters — SIGIL-SERVICEBRIDGE
+Betreff: Gebrauchsmusteranmeldung — SIGIL-SERVICEBRIDGE (GBM-4)
 
 Sehr geehrte Damen und Herren,
 
-hiermit melden wir ein Gebrauchsmuster für ein computerimplementiertes Verfahren zur **treuhandgesicherten, meilensteinbasierten Verwaltung von Dienstleistungsverträgen** an. Das Verfahren setzt auf DID-identifizierten Parteien und Schlichtern auf und erzeugt für jeden Vertragsschritt eine kryptografisch gesicherte Protokollkette mit Prüfwert.
+hiermit melden wir ein Gebrauchsmuster für ein computerimplementiertes Treuhandgateway für Dienstleistungsverträge an, das auf dem SIGIL-Protokoll (GBM-0, DPMA 2026-02-23) und dem SIGIL-Bridge-Core-Transferprimiti (GBM-1, 2026-02-25) aufbaut. Die wesentliche Neuheit gegenüber GBM-0 und GBM-1 liegt in der deterministischen, zurechenbaren Streitschlichtung durch einen zum Zeitpunkt der Vertragsschließung bindend festgelegten DID-identifizierten Schlichter sowie in der HMAC-verketteten Lebenszyklusprüfkette aller Zustandsübergänge.
 
 Mit freundlichen Grüßen
 Benjamin Küttner
@@ -28,84 +33,96 @@ Benjamin Küttner
 
 ### 2.1 Technisches Gebiet
 
-Die Erfindung betrifft ein computerimplementiertes Treuhandgateway, das eine Zahlungsanweisung für Dienstleistungen in gesicherte Verwahrung nimmt, den Vertragslebenszyklus (Einreichung, Lieferung, Abnahme, Streitigkeit, Schlichtung) als HMAC-verkettete Ereigniskette protokolliert und Zahlungen ausschließlich durch kryptografisch verifizierbare Ereignisse freigibt oder zurückführt.
+Die Erfindung betrifft ein computerimplementiertes Gateway, das digitale Zahlungen für Dienstleistungsverträge in meilensteingebundener Treuhand verwaltet, einen HMAC-verketteten Lebenszyklusverlauf protokolliert und Streitigkeiten durch einen vorab festgelegten, kryptografisch identifizierten Schlichter deterministisch und zurechenbar auflöst.
 
-### 2.2 Stand der Technik
+### 2.2 Bezug zu den Stamm-Schutzrechten
 
-Bestehende Dienstleistungs-Treuhandsysteme wie US11250439B2 (Kleros) verwenden tokenbasierte Jurorenpools für die Schlichtung — der Schlichter ist nicht im Vorhinein identifiziert. US10748144B2 (DocuSign) verwendet traditionelle elektronische Signaturen ohne HMAC-Audit-Kette und ohne CBDC-Integration. Keine bekannte Lösung kombiniert: (1) vorab festgelegten DID-Schlichter, (2) HMAC-verkettete Lebenszyklusprotokolle, und (3) Integration mit eIDAS-konformen CBDC-Zahlungen.
+**GBM-0 (DPMA 2026-02-23)** liefert das DID-Identitätssystem (Käufer, Anbieter, Schlichter), die Ed25519-Signaturinfrastruktur und den HMAC-Prüfprotokollrahmen. **GBM-1 (2026-02-25)** liefert das Transfer-Intent-Primitiv als Zahlungskomponente des Treuhandvertrags sowie die Atomaritätsgarantie für die Zahlungsfreigabe.
 
-### 2.3 Offenbarung der Erfindung
+Die vorliegende Erfindung (GBM-4) fügt hinzu:
 
-**Intent-Lebenszyklus-State-Machine:**
+- Meilensteinbasiertes Lebenszyklusmodell (Pending → Locked → Delivered → Settled / Disputed → Refunded)
+- Vorab festgelegter, DID-gebundener Schlichter als deterministischer Konfliktlösungsmechanismus
+- HMAC-verkettete Protokollierung aller Zustandsübergänge für gerichtsverwertbare Nachweise
+- Konfigurierbare Streitfrist nach Lieferungsmeldung
+
+### 2.3 Stand der Technik und Abgrenzung
+
+**US11250439B2 (Kleros, Tokenbasierte Jurorenpools):** Schlichter wird durch stochastische Tokengewichtung zufällig ausgewählt — nicht deterministisch, nicht vor Vertragsschluss vorhersehbar, nicht namentlich attributierbar. **US10748144B2 (DocuSign, Elektronische Signaturen):** Keine HMAC-Audit-Kette. Kein CBDC-Transfer-Primitiv. Kein Schlichtungsmechanismus.
+
+Keine bekannte Lösung kombiniert: (1) vorab festgelegten DID-Schlichter, (2) HMAC-verkettete Lebenszyklusprüfkette, (3) Integration mit dem SIGIL-Bridge-Core-Transferprimiti.
+
+### 2.4 Offenbarung der Erfindung
+
+**Dienstleistungsanweisung (ServiceIntent) als spezialisierter BridgeIntent:**
+
+Eine `ServiceIntent`-Datenstruktur enthält:
+
+- DID von Käufer, Anbieter und Schlichter (GBM-0-Identitätssystem)
+- Zahlungsbetrag und -währung als GBM-1-BridgeIntent-Komponente
+- Geordnete Meilensteinliste als Lieferungsnachweis
+- Streitigkeitsfenster (konfigurierbare Dauer nach Lieferungsmeldung)
+- Timeout-Feld für Gesamtvertragslaufzeit (GBM-1 Atomaritätsmechanismus)
+
+**Lebenszyklusautomat:**
 
 ```
-Pending ──► Locked ──── timeout ──► TimedOut (Rückerstattung)
+Pending ──► Locked ───── Timeout ──► TimedOut  (Rückerstattung)
                 │
-                ▼ /deliver
-           Delivered
+             /deliver
+                ▼
+           Delivered ──── /accept ──► Settled   (Zahlung freigegeben)
                 │
-                ├── /accept ──► Settled (Zahlung freigegeben)
-                │
-                └── /dispute ──► Disputed (Streitfenster offen)
-                                      │
-                                      └── /arbitrate ──► Settled | Refunded
+             /dispute (innerhalb Streitfrist)
+                ▼
+           Disputed ───── /arbitrate ──► Settled | Refunded
+                                         (Schlichter: DID-attributiert)
 ```
 
-Der **Schlichter (DID)** wird zum Zeitpunkt der Intent-Erstellung bindend festgelegt. Eine stochastische Schlichterauswahl existiert nicht. Dies macht die Streitbeilegung **deterministisch und zurechenbar** — für Unternehmensverträge, B2B-Software-SLAs und regulierte Branchen entscheidend.
+Jeder Zustandsübergang erzeugt einen HMAC-verketteten Eintrag gemäß GBM-0. Der Schlichter-DID ist im ServiceIntent unveränderlich festgelegt — keine nachträgliche Änderung, keine stochastische Auswahl möglich.
 
-**Live-Status (2026-02-24):**
+**Deterministische Schlichtung als Kernanspruch:**
 
-- Gateway `https://sigil-protocol.org/service/api/info` erreichbar: HTTP 200 ✅
-- Alle Endpunkte (`/submit`, `/deliver`, `/accept`, `/dispute`, `/arbitrate`) vorhanden ✅
+Der Schlichter ist durch seinen W3C-DID-Identifikator eindeutig identifiziert. Die Schlichtungsentscheidung (`Erledigt` oder `Erstattet`) ist durch seinen DID vollständig attributiert — rechtlich zurechenbar, forensisch nachvollziehbar. Das Schlichtungsprotokoll verbleibt als HMAC-verketteter Eintrag unveränderlich im Prüfprotokoll.
 
-### 2.4 Beschreibung der API-Endpunkte
+**Integration mit SIGIL-EURO (GBM-2):**
 
-| Endpunkt | HTTP | Auslöser | Zustandsübergang |
-|---|---|---|---|
-| `/service/intent/submit` | POST | Käufer | Pending → Locked |
-| `/service/intent/:id/deliver` | POST | Anbieter | Locked → Delivered |
-| `/service/intent/:id/accept` | POST | Käufer | Delivered → Settled |
-| `/service/intent/:id/dispute` | POST | Käufer | Delivered → Disputed |
-| `/service/intent/:id/arbitrate` | POST | Schlichter | Disputed → Settled / Refunded |
-
-Jeder Zustandsübergang erzeugt einen HMAC-verketteten Eintrag in der Prüfkette — eine lückenlose, gerichtsverwertbare Dokumentation des Vertragslebenswegs.
-
-### 2.5 Integration mit SIGIL-EURO
-
-Die Zahlungskomponente der `ServiceBridge` kann native SIGIL-EURO `PaymentIntent`-Primitive verwenden, sodass jede Zahlung eIDAS-konform, pseudonymisiert und dreischichtig protokolliert abläuft.
+Als optionale Erweiterung kann die Zahlungskomponente des ServiceIntent als SIGIL-EURO-PaymentIntent (GBM-2) implementiert werden, sodass die Dienstleistungszahlung eIDAS-konform, pseudonymisiert und dreischichtig protokolliert wird.
 
 ---
 
 ## 3. Ansprüche (Claims)
 
-**Anspruch 1** (unabhängig): Computerimplementiertes Verfahren zur treuhandgesicherten Verwaltung eines Dienstleistungsvertrags, dadurch gekennzeichnet, dass es:
+**Anspruch 1** (unabhängig, aufbauend auf GBM-0 und GBM-1): Computerimplementiertes Verfahren zur Verwaltung eines meilensteinbasierten Dienstleistungsvertrags unter Verwendung des SIGIL-Protokolls (GBM-0, DPMA 2026-02-23) und des SIGIL-Bridge-Core-Transferprimitivs (GBM-1, 2026-02-25), dadurch gekennzeichnet, dass es:
 
-(a) eine Dienstleistungsanweisung (`ServiceIntent`) entgegennimmt, die die dezentralen Identifikatoren von Käufer, Anbieter und Schlichter, eine Zahlungsmenge in einer definierten Währungseinheit, eine Liste von Liefermeilensteinen und ein Timeout-Datum umfasst;
+(a) eine Dienstleistungsanweisung entgegennimmt, die neben den Feldern des GBM-1-BridgeIntent die WC3-DID-Identifikatoren von Käufer, Anbieter und einem vorab festgelegten Schlichter, eine geordnete Meilensteinliste und ein Streitfristfeld umfasst;
 
-(b) die Zahlung des Käufers in gesicherter Verwahrung einfriert und den Intent in den Zustand `Locked` versetzt;
+(b) den Zahlungsbetrag in gesicherter Verwahrung einfriert und den Intent in den Zustand `Gesperrt` versetzt, sobald der Käufer bereitstellt;
 
-(c) bei Eingang einer vom Anbieter unterzeichneten Lieferungsmeldung den Intent in den Zustand `Delivered` versetzt;
+(c) nach Eingang einer vom Anbieter unterzeichneten Lieferungsmeldung den Intent in den Zustand `Geliefert` versetzt und eine konfigurierbare Streitfrist startet;
 
-(d) bei Eingang einer Abnahme des Käufers den Intent in `Settled` versetzt und die Zahlung an den Anbieter freigibt;
+(d) bei Eingang der Abnahme durch den Käufer innerhalb der Streitfrist den Zahlungsbetrag an den Anbieter freigibt und den Intent als `Erledigt` markiert;
 
-(e) bei Ablauf des Timeouts ohne Lieferungsmeldung die Zahlung an den Käufer zurückführt und den Intent als `TimedOut` markiert.
+(e) bei Ablauf des Gesamttimeouts ohne Lieferungsmeldung den Zahlungsbetrag an den Käufer zurückführt gemäß dem Atomaritätsmechanismus von GBM-1 Anspruch 1(d);
 
-**Anspruch 2** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass der Käufer innerhalb eines konfigurierbaren Streitfensters nach einer Lieferungsmeldung eine Streitigkeit eröffnen kann, der Intent in den Zustand `Disputed` wechselt und ein vorab im Intent hinterlegter, DID-identifizierter Schlichter exklusiv berechtigt ist, die Streitigkeit durch eine Schlichtungsentscheidung zu beenden, die entweder in die Freigabe der Zahlung an den Anbieter (`Settled`) oder in die Rückerstattung an den Käufer (`Refunded`) mündet.
+(f) jeden Zustandsübergang in der HMAC-verketteten Prüfkette des SIGIL-Prüfprotokollrahmens (GBM-0) protokolliert, wobei jeder Eintrag den DID der auslösenden Partei, den neuen Zustand und den HMAC-Wert des Vorgängereintrags enthält.
 
-**Anspruch 3** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass jeder Zustandsübergang des Intent-Lebenszyklus (Einreichung, Lieferung, Abnahme, Streitigkeit, Schlichtung) einen authentifizierten Eintrag an eine HMAC-SHA256-verkettete Prüfkette anhängt; wobei jeder Eintrag den dezentralen Identifikator der auslösenden Partei, den neuen Zustand, den Zeitstempel und den HMAC-Wert des vorangehenden Eintrags enthält, sodass die vollständige Vertragshistorie unveränderlich und gerichtsverwertbar nachgewiesen werden kann.
+**Anspruch 2** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass der Käufer innerhalb der konfigurierbaren Streitfrist nach Eingang der Lieferungsmeldung eine Streitigkeit eröffnen kann, woraufhin ausschließlich der zum Zeitpunkt der Vertragsschließung im ServiceIntent hinterlegte, DID-identifizierte Schlichter berechtigt ist, durch eine unterzeichnete Entscheidung die Streitigkeit durch Zahlungsfreigabe (`Erledigt`) oder Rückerstattung (`Erstattet`) zu beenden.
 
-**Anspruch 4** (abhängig von 2): Verfahren nach Anspruch 2, dadurch gekennzeichnet, dass der Schlichter zum Zeitpunkt der Intent-Erstellung durch seinen dezentralen Identifikator bindend festgelegt wird und nicht durch eine stochastische Schlichterauswahl (z.B. tokenbasierte Jurorenpools) bestimmt werden kann, wodurch die Streitbeilegung deterministisch und zurechenbar ist.
+**Anspruch 3** (abhängig von 2): Verfahren nach Anspruch 2, dadurch gekennzeichnet, dass der Schlichter bindend zum Zeitpunkt der Einreichung des ServiceIntent und nicht nachträglich bestimmt wird, sodass die Schlichtungszuständigkeit für alle Vertragsparteien vor Vertragsschluss vorhersehbar, eindeutig attributierbar und nicht durch stochastische Auswahl oder Nachverhandlung veränderbar ist.
 
-**Anspruch 5** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass die Zahlungskomponente als SIGIL-EURO-`PaymentIntent`-Primitiv gemäß dem SIGIL-EURO-Gebrauchsmuster (ko-angemeldet 2026-02-25) implementiert werden kann, sodass die Dienstleistungszahlung eIDAS-konform, SHA-256-pseudonymisiert und dreischichtig protokolliert abläuft.
+**Anspruch 4** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass die HMAC-verkettete Prüfkette aller Zustandsübergänge über eine authentifizierte Schnittstelle für Gerichts-, Steuer- oder Regulierungszwecke exportierbar ist und die lückenlose Vertragshistorie einschließlich Meilensteinprotokollen nachweist.
 
-**Anspruch 6** (abhängig von 3): Verfahren nach Anspruch 3, dadurch gekennzeichnet, dass die HMAC-Prüfkette aller Zustandsübergänge eines Intent über eine authentifizierte API-Schnittstelle exportierbar ist, einschließlich vollständiger Meilenstein-Protokolle für Gerichts-, Steuer- oder Regulierungszwecke.
+**Anspruch 5** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass die Zahlungskomponente des ServiceIntent als SIGIL-EURO-Zahlungsanweisung (GBM-2, 2026-02-25) implementiert werden kann, sodass Dienstleistungsverträge eIDAS-konform, mit SHA-256-pseudonymisiertem Empfänger und dreischichtigem Prüfprotokoll abgewickelt werden.
+
+**Anspruch 6** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass der Signaturmechanismus die Kryptoagilität von GBM-1 Anspruch 5 erbt, sodass der Wechsel auf ML-DSA (NIST FIPS 204) für alle am Vertrag beteiligten DID-Identitäten ohne Strukturänderung des ServiceIntent durchführbar ist.
 
 ---
 
 ## 4. Zusammenfassung (Abstract)
 
-Ein computerimplementiertes Verfahren verwaltet Dienstleistungsverträge als treuhandgesicherten Intent-Lebenszyklus. Käufer, Anbieter und Schlichter werden durch W3C Decentralised Identifiers identifiziert. Die Zahlung wird bei Intent-Einreichung eingefroren und nach Abnahme oder Schlichtungsentscheidung freigegeben. Jeder Zustandsübergang (Pending, Locked, Delivered, Settled, Disputed, Refunded) wird in einer HMAC-SHA256-Prüfkette protokolliert. Der Schlichter wird zum Erstellungszeitpunkt deterministisch und zurechenbar festgelegt. Das System lässt sich direkt mit dem SIGIL-EURO-Zahlungsgateway verbinden. (≈ 85 Wörter)
+Aufbauend auf dem SIGIL-Protokoll (GBM-0, DPMA 2026-02-23) und dem SIGIL-Bridge-Core (GBM-1, 2026-02-25) verwaltet das Verfahren Dienstleistungsverträge als meilensteingebundene Treuhand. Käufer, Anbieter und Schlichter werden durch W3C-DIDs identifiziert; der Schlichter wird bindend vor Vertragsschluss festgelegt. Jeder Zustandsübergang (Pending → Locked → Delivered → Settled | Disputed → Refunded) wird HMAC-verkettet protokolliert. Bei Streitigkeit entscheidet ausschließlich der vorab festgelegte, kryptografisch authentifizierte Schlichter — deterministisch, zurechenbar, nicht stochastisch. Die Zahlung kann als SIGIL-EURO-Intent (GBM-2) eIDAS-konform abgewickelt werden. Der Signaturmechanismus erbt die Kryptoagilität von GBM-1. (≈ 100 Wörter)
 
 ---
 
-*SIGIL-SERVICEBRIDGE Patent — 2026-02-25 — Patent Pending — EUPL-1.2*
+*SIGIL-SERVICEBRIDGE · GBM-4 · 2026-02-25 · Patent Pending · EUPL-1.2*

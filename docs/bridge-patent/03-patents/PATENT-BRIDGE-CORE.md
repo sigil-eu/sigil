@@ -1,10 +1,12 @@
 # PATENT — SIGIL-BRIDGE-CORE
 
-## DE Gebrauchsmuster — Atomic Asset-Agnostic Cross-Ledger Transfer
+## DE Gebrauchsmuster · Erweiterung des SIGIL-Protokolls auf Wertübertragung
+
+## GBM-1 der SIGIL-Patentfamilie
 
 **Anmeldedatum:** 2026-02-25
 **Anmelder:** Benjamin Küttner, [Adresse eintragen]
-**Priorität:** Fortführung und Erweiterung DE Gebrauchsmuster SIGIL Protocol (eingereicht 2026-02-22)
+**Priorität / Stammanmeldung:** DE Gebrauchsmuster SIGIL Protocol, eingereicht 2026-02-23 (Aktenzeichen ausstehend) — **GBM-0 der SIGIL-Patentfamilie**
 **Lizenz:** EUPL-1.2 + Kommerzielle Lizenz
 
 ---
@@ -13,11 +15,11 @@
 
 **An:** Deutsches Patent- und Markenamt, 80297 München
 
-Betreff: Anmeldung eines Gebrauchsmusters — SIGIL Bridge Core
+Betreff: Gebrauchsmusteranmeldung — SIGIL-BRIDGE-CORE (GBM-1)
 
 Sehr geehrte Damen und Herren,
 
-hiermit melden wir ein Gebrauchsmuster für eine computerimplementierte Methode zur **assetklassenagnostischen, atomaren Übertragung digitaler Vermögenswerte zwischen verteilten Ledgern** an. Die vorliegende Erfindung erweitert das SIGIL-Protokoll (DE Gebrauchsmuster, eingereicht 2026-02-22) auf den Bereich der Wertübertragung und Finanzinfrastruktur.
+hiermit melden wir ein Gebrauchsmuster als Weiterentwicklung des SIGIL-Protokolls (GBM-0, eingereicht 2026-02-23) an. Die vorliegende Erfindung erweitert das dort geschützte Identitäts- und Prüfprotokoll auf den Bereich der **atomaren Übertragung digitaler Vermögenswerte** zwischen verteilten Ledgern. Die SIGIL-Bridge-Core-Architektur bildet die Plattformbasis für alle spezialisierten SIGIL-Bridge-Anwendungen (SIGIL-EURO, SIGIL-FXBRIDGE, SIGIL-SERVICEBRIDGE), die als abhängige Gebrauchsmuster GBM-2 bis GBM-4 gleichzeitig angemeldet werden.
 
 Anliegend übersenden wir: Beschreibung, Ansprüche und Zusammenfassung.
 
@@ -30,88 +32,82 @@ Benjamin Küttner
 
 ### 2.1 Technisches Gebiet
 
-Die Erfindung betrifft computerimplementierte Verfahren zur kryptografisch gesicherten, atomaren Übertragung digitaler Vermögenswerte zwischen unabhängigen Ledgersystemen unter Verwendung von Hashed Time-Locked Contracts (HTLCs), dezentralen Identifikatoren (DID) und HMAC-verketteten Prüfprotokollen.
+Die Erfindung betrifft computerimplementierte Verfahren zur kryptografisch gesicherten, atomaren Übertragung digitaler Vermögenswerte zwischen unabhängigen Ledgersystemen, unter Verwendung kryptografischer Hash-Präimage-Sperren (HTLC), dezentraler Identifikatoren (DID) und HMAC-verketteter Prüfprotokolle.
 
-### 2.2 Stand der Technik
+### 2.2 Bezug zum Stamm-Schutzrecht (GBM-0)
 
-Bestehende Lösungen wie Bitcoin Lightning Network (HTLC in homogenen Netzwerken) und Interledger Protocol (ILP) bieten atomare Transfers für spezifische Asset-Typen. Keines dieser Systeme kombiniert:
+Das SIGIL-Protokoll (GBM-0) schützt ein allgemeines Sicherheitsrahmenwerk für KI-Agenten-Interaktionen, bestehend aus einem signierten Identitätsumschlag (`_sigil`-Envelope), einer rein-funktionalen Inhaltsprüfschnittstelle, einer HMAC-verketteten Prüfprotokollkette und einem Tresorsystem. GBM-0 definiert die **Identitätsinfrastruktur** (W3C-Decentralised Identifiers, Ed25519-Signaturen) und die **Prüfprotokollarchitektur**, auf der GBM-1 aufbaut.
 
-1. **Assetklassenagnostische** HTLC-Primitive (Währung, Wertpapier, Token in einem Vertrag)
-2. **W3C-DID-Attribution** beider Vertragsparteien
-3. **HMAC-SHA256-Prüfkette** für jeden Zustandsübergang
+Die vorliegende Erfindung überträgt diese Infrastruktur auf einen neuen Anwendungsbereich: **die Übertragung von Werten statt Informationen**.
 
-Eine solche Kombination ist weder als Patentliteratur noch als veröffentlichte Referenzimplementierung auffindbar.
+### 2.3 Stand der Technik
 
-### 2.3 Offenbarung der Erfindung
+Bestehende Lösungen (Bitcoin Lightning Network, Interledger Protocol, Ripple/XRP) bieten atomare Transfers für spezifische Asset-Klassen oder homogene Netzwerke. Keine dieser Lösungen kombiniert:
 
-Die Erfindung beschreibt das `HtlcContract`-Primitiv und die `BridgeAuditChain`:
+1. **Assetklassenagnostische** Vertragsprimitive in einem einheitlichen Format (Währung, Wertpapier, Token)
+2. **W3C-DID-Attribution** beider Vertragsparteien in jedem Transfervertrag
+3. **HMAC-verkettete Prüfkette** direkt aus dem SIGIL-Protokoll-Prüfprotokollrahmen
+4. **Algorithmusagnostisches Design** für den Wechsel auf post-quanten-sichere Signaturverfahren
 
-**Asset-Typen (polymorphe Klasse):**
+### 2.4 Offenbarung der Erfindung
 
-```rust
-pub enum Asset {
-    Currency { currency: String, amount_units: u64, display: String },
-    Security  { isin: String, quantity: u64, display: String },
-    Token     { contract_id: String, token_id: String, amount: u64, chain: String },
-}
-```
+**Kernprimitive — Asset-agnostischer Transfer-Vertrag:**
 
-**HTLC-Vertrag:**
+Ein `BridgeIntent`-Datensatz enthält:
 
-```rust
-pub struct HtlcContract {
-    pub contract_id:      String,
-    pub preimage_hash:    PreimageHash,
-    pub locked_asset:     Asset,
-    pub holder_did:       Did,
-    pub beneficiary_did:  Did,
-    pub locked_at:        i64,
-    pub timeout_at:       i64,
-    pub state:            HtlcState,
-    pub preimage_revealed: Option<Preimage>,
-}
-```
+- einen SHA-256-Hash eines geheimen Preimage (kryptografische Sperre)
+- einen digitalen Vermögenswert einer polymorphen Assetklasse (Währung, Wertpapier, On-Chain-Token, oder eine zukünftige Erweiterungsklasse)
+- dezentrale Identifikatoren (W3C DID) beider Vertragsparteien (Halter und Begünstigter)
+- ein Unix-Timeout-Feld
 
-Settlement ist **mathematisch atomar**: `state = Settled` genau dann, wenn `SHA256(preimage_revealed) == preimage_hash`. Es existiert kein Zustand, in dem eine Seite den Wert erhält, ohne dass die Gegenseite den kryptografischen Nachweis offenbart.
+**Atomaritätsgarantie:**
 
-Jeder Zustandsübergang erzeugt einen Eintrag in der `BridgeAuditChain`, einer HMAC-SHA256-verketteten, append-only Protokolldatei. Jeder Eintrag enthält den HMAC des Vorgängers (`prev_hmac`), sodass jegliche nachträgliche Änderung eines Eintrags alle nachfolgenden HMAC-Werte invalidiert.
+Der Zustand `Erledigt` (`Settled`) wird ausschließlich durch die Offenbarung eines Geheimwerts `S` herbeigeführt, für den gilt: `SHA-256(S) = PreimageHash`. Es existiert kein Systemzustand, in dem eine Vertragspartei den Vermögenswert erhält, ohne dass die Gegenseite den kryptografischen Nachweis offenbart hat.
 
-### 2.4 Vorteilhafte Ausführungsformen
+**HMAC-Prüfkette (Erweiterung von GBM-0):**
 
-- Die Assetklasse kann ohne Protokolländerung erweitert werden (z.B. um NFT, CO2-Zertifikat).
-- DID-Attribution erfolgt gemäß W3C DID Core 1.0 — kompatibel mit eIDAS 2.0 Wallets.
-- Die Prüfkette kann periodisch in einem öffentlichen Data-Availability-Layer verankert werden (z.B. Celestia, Solana).
+Jeder Zustandsübergang des `BridgeIntent` erzeugt einen Eintrag in der HMAC-verketteten Prüfkette gemäß GBM-0. Jeder Eintrag enthält DID der auslösenden Partei, das finanzielle Ergebnis sowie den HMAC-SHA256-Wert des Vorgängereintrags. Die Unverändertheit der gesamten Kette ist durch Merkle-Root-Verankerung in einem öffentlichen Distributed-Ledger nachweisbar.
+
+**Timeout-Invariante bei verketteten Transfers:**
+
+Bei n aufeinanderfolgenden `BridgeIntent`-Verträgen mit demselben Preimage-Hash wird serverseitig geprüft, dass `Timeout[i] > Timeout[i+1]` für alle `i`. Diese Invariante garantiert die kausalsichere rückwärtige Preimage-Propagation: Kein Zwischenprovider kann die Auszahlung erzwingen, ohne das Preimage zu offenbaren.
+
+**Kryptoagile Signaturarchitektur (PATENT NOTE 2026-02-25):**
+
+Der Signaturmechanismus ist hinter einem algorithmisch neutralen Signing-Interface implementiert, das den eingesetzten Signaturalgorithmus (`Ed25519`, `ML-DSA-65` nach NIST FIPS 204, oder künftige Verfahren) als maschinenlesbares Feld im Protokolleintrag führt. Ein Verifier wählt den Verifizierungspfad anhand dieses Feldes, ohne externe Konfiguration. Der Wechsel auf post-quanten-sichere Verfahren (z.B. CRYSTALS-Dilithium3) ist ohne Protokolländerung möglich.
 
 ---
 
 ## 3. Ansprüche (Claims)
 
-**Anspruch 1** (unabhängig): Computerimplementiertes Verfahren zur atomaren Übertragung eines digitalen Vermögenswerts zwischen zwei mittels dezentralem Identifikator (DID) identifizierten Parteien, dadurch gekennzeichnet, dass es:
+**Anspruch 1** (unabhängig — Plattformanspruch): Computerimplementiertes Verfahren zur atomaren Übertragung eines digitalen Vermögenswerts zwischen zwei durch dezentrale Identifikatoren (DID) gemäß W3C-Standard identifizierten Parteien unter Verwendung des SIGIL-Protokolls (DE Gebrauchsmuster GBM-0, 2026-02-23), dadurch gekennzeichnet, dass es:
 
-(a) einen `HtlcContract`-Datensatz erzeugt, welcher einen SHA-256-Hash eines geheimen Preimage, einen digitalen Vermögenswert einer polymorphen Assetklasse, die dezentralen Identifikatoren von Halter und Begünstigtem sowie ein Timeout-Feld umfasst;
+(a) einen Transfer-Intent-Datensatz erzeugt, welcher einen kryptografischen Hash eines geheimen Preimage, einen digitalen Vermögenswert einer polymorphen Assetklasse, die DID-Identifikatoren von Halter und Begünstigtem sowie ein Timeout-Feld umfasst;
 
-(b) den Vertrag in den Zustand `Locked` versetzt, sobald der Halter den Vermögenswert bereitstellt;
+(b) den Vermögenswert einfriert und den Intent in den Zustand `Gesperrt` versetzt, sobald der Halter ihn bereitstellt;
 
-(c) den Zustand `Settled` ausschließlich durch die Offenbarung eines Preimage `S` herbeiführt, für das gilt: `SHA256(S) == preimage_hash`;
+(c) den Zustand `Erledigt` ausschließlich durch die Offenbarung eines Preimage herbeiführt, dessen kryptografischer Hash mit dem gespeicherten Hashwert übereinstimmt — mathematisch atomar, ohne jeden Zwischenzustand, in dem nur eine Partei den Wert erhalten hat;
 
-(d) bei Ablauf des Timeouts ohne Preimage-Offenbarung den Zustand `TimedOut` aktiviert und den Vermögenswert an den Halter zurückführt.
+(d) bei Ablauf des Timeout-Felds ohne Preimage-Offenbarung den Vermögenswert an den Halter zurückführt und den Intent als `Abgelaufen` markiert;
 
-**Anspruch 2** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass bei einer Kette von n HTLCs mit demselben Preimage-Hash serverseitig geprüft wird, dass `timeout[i] > timeout[i+1]` für alle i gilt, und bei Verletzung dieser Invariante die Intent-Einreichung mit Fehlercode `422 Unprocessable Entity` abgewiesen wird.
+(e) jeden Zustandsübergang gemäß dem SIGIL-Prüfprotokollrahmen (GBM-0) in einer HMAC-SHA256-verketteten, append-only Prüfkette protokolliert, wobei jeder Eintrag den DID der auslösenden Partei sowie den HMAC-Wert des Vorgängereintrags enthält.
 
-**Anspruch 3** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass jeder Zustandsübergang einen strukturierten Eintrag an eine append-only `BridgeAuditChain` anhängt, wobei jeder Eintrag den HMAC-SHA256-Wert des vorangehenden Eintrags (`prev_hmac`) einschließt, sodass eine nachträgliche Änderung eines Eintrags alle nachfolgenden Einträge invalidiert, und wobei jeder Eintrag den dezentralen Identifikator der initiierenden Partei sowie das finanzielle Ergebnis des Zustandsübergangs enthält.
+**Anspruch 2** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass bei einer Kette von n Transfer-Intents mit demselben Preimage-Hash vor jedem Schreibvorgang serverseitig geprüft wird, dass der Timeout-Wert jedes äußeren Intents denjenigen des nächsten inneren Intents übersteigt, und dass eine Verletzung dieser Invariante die Annahme des Intents verhindert.
 
-**Anspruch 4** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass die polymorphe Assetklasse mindestens die Typen Währung (CBDC/Fiatgeldäquivalent), Wertpapier (mittels ISIN-Code identifiziert) und On-Chain-Token (mittels Contract-ID und Chain-Bezeichner identifiziert) umfasst.
+**Anspruch 3** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass die polymorphe Assetklasse ohne Protokolländerung um neue Vermögenswerttypen erweiterbar ist und mindestens die Typen (a) Fiat-Währung oder Zentralbankgeld (CBDC), identifiziert durch ISO-4217-Code, (b) Wertpapier, identifiziert durch ISIN, und (c) On-Chain-Token, identifiziert durch Contract-Adresse und Chain-Bezeichner umfasst.
 
-**Anspruch 5** (abhängig von 3): Verfahren nach Anspruch 3, dadurch gekennzeichnet, dass periodisch ein Merkle-Baum über die HMAC-Werte aller ausstehenden `BridgeAuditChain`-Einträge berechnet wird und der Merkle-Root in einem öffentlichen Distributed-Ledger verankert wird, sodass ein Dritter ohne Vertrauen in den Systembetreiber die Integrität des gesamten Prüfprotokolls verifizieren kann.
+**Anspruch 4** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass die HMAC-Prüfkette periodisch durch Berechnung eines Merkle-Baums über alle Eintragsauthentifizierungswerte und Verankerung des resultierenden Merkle-Roots in einem öffentlichen Distributed-Ledger extern verifizierbar gemacht wird, sodass ein Dritter ohne Vertrauen in den Systembetreiber die Vollständigkeit und Unverändertheit des Prüfprotokolls nachweisen kann.
 
-**Anspruch 6** (abhängig von 1): System nach Anspruch 1, dadurch gekennzeichnet, dass die Parteien durch Decentralised Identifiers gemäß W3C DID Core 1.0 identifiziert werden, die mit eIDAS-2.0-konformen Wallets kompatibel sind.
+**Anspruch 5** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass der Signaturmechanismus hinter einem algorithmisch neutralen Signing-Interface implementiert ist, das den eingesetzten Signaturalgorithmus als maschinenlesbares Identifikationsfeld im Protokolldatensatz führt, sodass der eingesetzte Algorithmus — insbesondere durch Modul-Gitter-basierte Signaturverfahren (ML-DSA) gemäß NIST FIPS 204 — ohne Protokolländerung ausgetauscht werden kann (Kryptoagilität).
+
+**Anspruch 6** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass die dezentralen Identifikatoren gemäß W3C DID Core 1.0 spezifiziert sind und mit eIDAS-2.0-konformen Wallets und qualifizierten elektronischen Signaturträgern kompatibel sind, sodass das Verfahren ohne Schnittstellenänderung in regulierte europäische Finanzinfrastrukturen integriert werden kann.
 
 ---
 
 ## 4. Zusammenfassung (Abstract)
 
-Ein computerimplementiertes Verfahren ermöglicht die atomare, kryptografisch gesicherte Übertragung digitaler Vermögenswerte — Währungen, Wertpapiere oder Token — zwischen unabhängigen Ledgern, ohne eine zentrale Verrechnungsstelle. Das Verfahren verwendet Hashed Time-Locked Contracts (HTLCs), bei denen Halter und Begünstigter durch W3C-konforme dezentrale Identifikatoren (DID) identifiziert werden. Jeder Zustandsübergang wird in einer HMAC-SHA256-Prüfkette protokolliert. Bei mehreren Hops wird eine Timeout-Invariante erzwungen, die die rückwärtige Preimage-Propagation garantiert. Das System ist assetklassenagnostisch und damit ohne Protokolländerungen auf neue Vermögenswertklassen erweiterbar. (≈ 90 Wörter)
+Ein computerimplementiertes Verfahren erweitert das SIGIL-Protokoll (GBM-0, 2026-02-23) auf die atomare Übertragung digitaler Vermögenswerte zwischen DID-identifizierten Parteien. Vermögenswerte der Klassen Währung, Wertpapier und On-Chain-Token werden durch ein einheitliches Transfer-Intent-Primitiv mit kryptografischer Hash-Präimage-Sperre und konfigurierbarem Timeout übertragen. Jeder Zustandsübergang wird in der HMAC-verketteten Prüfkette des SIGIL-Prüfprotokollrahmens dokumentiert; periodisch wird ein Merkle-Root in einem öffentlichen Distributed-Ledger verankert. Bei verketteten Transfers wird eine Timeout-Invariante serverseitig erzwungen. Der Signaturmechanismus ist kryptoagil: ein algorithmisches Identifikationsfeld im Protokoll ermöglicht den Wechsel auf post-quanten-sichere Verfahren (ML-DSA, NIST FIPS 204) ohne Protokolländerung. Das Verfahren bildet die Plattformbasis für SIGIL-EURO (GBM-2), SIGIL-FXBRIDGE (GBM-3) und SIGIL-SERVICEBRIDGE (GBM-4). (≈ 120 Wörter)
 
 ---
 
-*SIGIL-BRIDGE-CORE Patent — 2026-02-25 — Patent Pending — EUPL-1.2*
+*SIGIL-BRIDGE-CORE · GBM-1 · 2026-02-25 · Patent Pending · EUPL-1.2*

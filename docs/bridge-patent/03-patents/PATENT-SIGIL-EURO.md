@@ -1,10 +1,15 @@
 # PATENT — SIGIL-EURO
 
-## DE Gebrauchsmuster — eIDAS-Compliant Digital Euro Payment Gateway
+## DE Gebrauchsmuster · eIDAS-konformes Zahlungsgateway auf SIGIL-Bridge-Basis
+
+## GBM-2 der SIGIL-Patentfamilie
 
 **Anmeldedatum:** 2026-02-25
 **Anmelder:** Benjamin Küttner, [Adresse eintragen]
-**Priorität:** Fortführung DE Gebrauchsmuster SIGIL Protocol (2026-02-22) + SIGIL-BRIDGE-CORE (2026-02-25)
+**Priorität / Stammanmeldungen:**
+
+- GBM-0: DE Gebrauchsmuster SIGIL Protocol, eingereicht 2026-02-23
+- GBM-1: DE Gebrauchsmuster SIGIL-Bridge-Core, eingereicht 2026-02-25 (gleichzeitig)
 **Lizenz:** EUPL-1.2 + Kommerzielle Lizenz
 
 ---
@@ -13,13 +18,11 @@
 
 **An:** Deutsches Patent- und Markenamt, 80297 München
 
-Betreff: Anmeldung eines Gebrauchsmusters — SIGIL-EURO
+Betreff: Gebrauchsmusteranmeldung — SIGIL-EURO (GBM-2)
 
 Sehr geehrte Damen und Herren,
 
-hiermit melden wir ein Gebrauchsmuster für ein computerimplementiertes Verfahren zur **eIDAS-konformen Verarbeitung, kryptografischen Signierung und revisionssicheren Protokollierung digitaler Zahlungsanweisungen** an. Die Erfindung ist auf digitale Zentralbankwährungen (CBDC) sowie auf regulierte elektronische Zahlungen in beliebigen ISO-4217-Währungen anwendbar.
-
-Die Erfindung wurde am 2026-02-24 erfolgreich im Echtbetrieb auf einem produktiven Server demonstriert (siehe § 2.5).
+hiermit melden wir ein Gebrauchsmuster für ein computerimplementiertes eIDAS-konformes Zahlungsgateway an, das auf dem SIGIL-Protokoll (GBM-0) und dem SIGIL-Bridge-Core (GBM-1) aufbaut. Die Erfindung wurde am 2026-02-24 im Echtbetrieb erfolgreich demonstriert (Audit Sequence #15, Celestia Mocha Block 10221745).
 
 Mit freundlichen Grüßen
 Benjamin Küttner
@@ -30,97 +33,98 @@ Benjamin Küttner
 
 ### 2.1 Technisches Gebiet
 
-Die Erfindung betrifft ein computerimplementiertes Gateway-System zur Verarbeitung kryptografisch signierter, eIDAS-konformer Zahlungsanweisungen mit integrierter AML/CTF-Prüfung und dreischichtigem, tamper-evidentem Prüfprotokoll.
+Die Erfindung betrifft ein computerimplementiertes Zahlungsgateway für eIDAS-konforme, kryptografisch signierte Zahlungsanweisungen mit integrierter AML/CTF-Prüfung, DSGVO-konformer Empfänger-Pseudonymisierung und dreischichtigem, tamper-evidentem Prüfprotokoll — aufgebaut auf dem SIGIL-Protokoll (GBM-0) und dem SIGIL-Bridge-Core-Transferprimiti (GBM-1).
 
-### 2.2 Stand der Technik
+### 2.2 Bezug zu den Stamm-Schutzrechten
 
-Bestehende CBDC-Architekturen (EP4181458A1, Deutsche Bundesbank; EP3850567A1 u.a.) beschreiben Ausstellungsplattformen und Identitätssysteme. Sie spezifizieren keine **signierten Zahlungsanweisungs-Primitive** auf Anwendungsebene, die eIDAS-Vertrauensstufen einbetten, Empfänger-Pseudonymisierung (SHA-256) als DSGVO-Designeigenschaft implementieren und eine dreischichtige kryptografische Prüfkette erzeugen.
+**GBM-0** liefert die Identitätsinfrastruktur (W3C-DID, Ed25519-Signatur), die rein-funktionale Prüfschnittstelle und den HMAC-Prüfprotokollrahmen, den SIGIL-EURO als Schicht 1 seines dreischichtigen Prüfprotokolls verwendet.
 
-Herkömmliche AML-Systeme protokollieren entweder keine Rohdaten (Datenverlust) oder speichern vollständige Transaktionsinhalte (DSGVO-Verstoß). Das SIGIL-EURO-System löst diesen Widerspruch durch rein-funktionale AML-Scanner-Schnittstellen, die ausschließlich Kategorie-Hashes in das Prüfprotokoll schreiben.
+**GBM-1** liefert das Transfer-Intent-Primitiv und die Atomaritätsgarantie, auf der die Zahlungsanweisung (`PaymentIntent`) als spezialisierter Transfer-Intent für Fiat-Währungen und CBDCs aufsetzt.
 
-### 2.3 Offenbarung der Erfindung
+Die vorliegende Erfindung fügt gegenüber GBM-0 und GBM-1 hinzu:
 
-**PaymentIntent-Datenstruktur:**
+- eIDAS-Vertrauensstufen-Enforcement vor jedem Datenbankschreibvorgang
+- DSGVO-konforme Empfänger-Pseudonymisierung als Designeigenschaft (nicht Richtlinie)
+- Rein-funktionale AML-Scanner-Schnittstelle mit formalem Reinheitsnachweis
+- Merkle-Tree-Batch-Aggregation + Public-DA-Verankerung (Schichten 2 und 3)
 
-```rust
-pub struct PaymentIntent {
-    pub payment_reference: String,       // SEPA-kompatible Referenz
-    pub payer_did:         Did,          // W3C-DID des Zahlers
-    pub recipient_hash:    [u8; 32],     // SHA-256(Empfänger-DID) — kein Klartext
-    pub amount_cents:      u64,          // Euro-Cent (kein Gleitkomma)
-    pub currency:          String,       // ISO 4217
-    pub consent_scope:     ConsentScope, // SinglePayment | StandingOrder
-    pub trust_level:       TrustLevel,   // Low | High (eIDAS-Mapping)
-    pub payload_hash:      [u8; 32],     // SHA-256(Canonical Payload)
-    pub timestamp:         i64,
-    pub signature:         Vec<u8>,      // Ed25519 über payload_hash‖recipient_hash‖ts‖did
-    pub aml_flags:         Vec<AmlFlag>,
-}
+### 2.3 Stand der Technik und Abgrenzung
+
+Bestehende CBDC-Architekturen (EP4181458A1, EP3850567A1) beschreiben Ausstellungsplattformen und Identitätssysteme, spezifizieren jedoch keine **signierten Zahlungsanweisungs-Primitive** auf Anwendungsebene, die alle vier folgenden Eigenschaften vereinen:
+
+1. eIDAS-Vertrauensstufe als strukturiertes Datenfeld (nicht Policy-Metadaten)
+2. SHA-256-Empfänger-Pseudonymisierung als DSGVO-Designeigenschaft
+3. Rein-funktionale (seiteneffektfreie) AML-Scanner-Schnittstelle
+4. Dreischichtiges kryptografisches Prüfprotokoll mit Public-DA-Verankerung
+
+### 2.4 Offenbarung der Erfindung
+
+**Zahlungsanweisung (`PaymentIntent`) — erweiterter Transfer-Intent:**
+
+Alle Felder von GBM-1 BridgeIntent plus:
+
+- eIDAS-Vertrauensstufe (`Low` / `High`) — gemäß eIDAS-VO (EU) Nr. 910/2014
+- ISO-4217-Währungsbezeichner
+- SHA-256-Hash des Empfänger-DID (niemals der Klartext-DID)
+- Betrag in kleinster Währungseinheit (kein Gleitkomma)
+- Einwilligungsumfang (`EinzelZahlung` / `Dauerauftrag`)
+- AML-Markierungsliste (Kategorie-Hashes, nie Klartextinhalte)
+
+**Formale Reinheitseigenschaft des AML-Scanners:**
+
 ```
+AmlScanner: &str → Vec<AmlFlag>
+```
+
+Die Schnittstelle ist als **synchrone, rein-funktionale Abbildung** definiert. Das `&self` (unveränderliche Ausleihe) erzwingt in sicherem Rust das Fehlen von Zustandsmutation außerhalb des Rückgabewerts. Konforme Implementierungen dürfen keine Netzwerkkommunikation, keine Datenbankschreiboperationen und keine Hintergrundaufgaben ausführen. Das Prüfprotokoll enthält ausschließlich den SHA-256-Hash des auslösenden Inhalts, nie den Inhalt selbst. Damit erfüllt das System Art. 5 Abs. 1 lit. c DSGVO (Datenminimierung) als **Designeigenschaft**, nicht als Richtlinie — formal nachweisbar und für Beweisassistenten (Coq, Lean) geeignet.
 
 **Dreischichtiges Prüfprotokoll:**
 
-```
-Schicht 1: HMAC-SHA256 pro Eintrag       → Lokale Manipulationserkennung
-Schicht 2: Merkle-Baum-Batch             → Batch-Integrität (stündlich)
-Schicht 3: Merkle-Root auf Public-DA     → Betreiberunabhängiger Beweis
-```
+- Schicht 1 (GBM-0): HMAC-SHA256 pro Eintrag — lokale Manipulationserkennung
+- Schicht 2 (neu): Merkle-Baum-Aggregation über konfigurierbare Zeitintervalle
+- Schicht 3 (neu): Verankerung des Merkle-Root in einem öffentlichen DA-Layer
 
-**Evidenz (2026-02-24):**
+**Live-Evidenz (Prioritätsdokument):**
 
-- Intent `SIGILEURO-20260224-512a1bcc`, €15,00, Audit Seq #15, HTTP 200 ✅
-- Celestia Mocha Block 10221745, Root `0xfb19a5ff...` ✅
-
-Das System hat worden am 2026-02-24 erfolgreich im Echtbetrieb demonstriert, was als Nachweis der Ausführbarkeit dient.
-
-### 2.4 Anwendungsbereich
-
-Das SIGIL-EURO-Primitive ist ohne wesentliche Protokolländerungen auf beliebige ISO-4217-Währungen (USD, GBP, CHF) sowie auf tokenisierte Wertpapiere übertragbar; lediglich die Währungsbezeichnung und die länderspezifischen regulatorischen Einschränkungen müssen angepasst werden.
-
-### 2.5 AML-Scanner-Schnittstelle (Rein-funktionales Design)
-
-```rust
-pub trait AmlScanner: Send + Sync {
-    fn scan(&self, text: &str) -> Vec<AmlFlag>;
-}
-```
-
-Die Schnittstelle ist als synchrone, rein-funktionale Abbildung definiert. Die verwendeten Implementierungen führen keine Netzwerkoperationen und keine Zustandsmutation außerhalb des Rückgabewerts durch. Das Prüfprotokoll enthält ausschließlich den SHA-256-Hash des auslösenden Inhalts — nie den Inhalt selbst. Dies erfüllt Art. 5(1)(c) DSGVO (Datenminimierung) bei vollständiger AML-Rückverfolgbarkeit.
+- Zahlungsanweisung `SIGILEURO-20260224-512a1bcc`, €15,00, Audit Seq #15, HTTP 200 ✅
+- Celestia Mocha Block 10221745, Merkle-Root `0xfb19a5ff...`, Timestamp 2026-02-24 ✅
 
 ---
 
 ## 3. Ansprüche (Claims)
 
-**Anspruch 1** (unabhängig): Computerimplementiertes Verfahren zur Verarbeitung einer kryptografisch signierten Zahlungsanweisung, dadurch gekennzeichnet, dass es:
+**Anspruch 1** (unabhängig, aufbauend auf GBM-0 und GBM-1): Computerimplementiertes Verfahren zur eIDAS-konformen Verarbeitung einer kryptografisch signierten Zahlungsanweisung unter Verwendung des SIGIL-Protokolls (GBM-0, 2026-02-23) und des SIGIL-Bridge-Core-Transferprimitivs (GBM-1, 2026-02-25), dadurch gekennzeichnet, dass es:
 
-(a) eine Zahlungsanweisung (`PaymentIntent`) annimmt, die einen W3C-konformen dezentralen Identifikator des Zahlers, einen SHA-256-Hash des Empfänger-Identifikators, den Betrag in kleinster Währungseinheit, eine ISO-4217-Währungsbezeichnung, eine eIDAS-kompatible Vertrauensstufe, einen Ed25519-Zeitstempel sowie eine Ed25519-Signatur über einen kanonischen Hash aller vorgenannten Felder umfasst;
+(a) eine Zahlungsanweisung entgegennimmt, die neben den Pflichtfeldern des GBM-1 BridgeIntent zusätzlich eine eIDAS-kompatible Vertrauensstufe, einen SHA-256-Hash des Empfänger-Identifikators (nicht den Klartext), den Betrag in kleinster Währungseinheit, eine ISO-4217-Währungsbezeichnung und eine digitale Signatur gemäß GBM-0 über alle vorgenannten Felder umfasst;
 
-(b) die Ed25519-Signatur serverseitig gegen den öffentlichen Schlüssel des Zahler-DIDs verifiziert;
+(b) die digitale Signatur gemäß dem Signaturrahmen von GBM-0 verifiziert;
 
-(c) die Zahlungsanweisung vor jedem Datenbankschreibvorgang anhand der Vertrauensstufe und des Betrags prüft;
+(c) die Vertrauensstufe und den Betrag **vor jedem Datenbankschreibvorgang** prüft und Zahlungsanweisungen, die die Vertrauensstufenanforderung nicht erfüllen, vollständig abweist — ohne Anlage eines Protokolleintrags — sodass keine abgelehnten Einträge die Prüfkette verunreinigen;
 
-(d) einem integrierten AML/CTF-Scanner übergibt, der als synchrone, rein-funktionale Abbildung implementiert ist und ausschließlich Kategorie-Kennungen in das Prüfprotokoll schreibt.
+(d) die Zahlungsanweisung einer rein-funktionalen AML/CTF-Prüfschnittstelle übergibt, die als synchrone, seiteneffektfreie Abbildung implementiert ist und ausschließlich Kategorie-Hashes in das Prüfprotokoll schreibt;
 
-**Anspruch 2** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass Zahlungsanweisungen mit Vertrauensstufe `Low` über einer konfigurierbaren Schwelle (Standard: 5.000 Cent = €50,00) vor jedem Datenbankschreibvorgang abgewiesen werden, sodass keine abgelehnten Einträge in das Prüfprotokoll gelangen.
+(e) einen vollständigen dreischichtigen Prüfeintrag gemäß § 2.4 erzeugt.
 
-**Anspruch 3** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass das AML-Prüfsystem als rein-funktionale Schnittstelle definiert ist, welche eine Zeichenkette auf eine Liste von Markierungen abbildet, wobei das Prüfprotokoll ausschließlich den SHA-256-Hash des auslösenden Inhalts und die Markierungskategorie erfasst, niemals den Klartextinhalt, womit Art. 5(1)(c) DSGVO (Datenminimierung) als Designeigenschaft erfüllt wird.
+**Anspruch 2** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass die Vertrauensstufe `Hoch` einer qualifizierten elektronischen Signatur gemäß eIDAS-Verordnung (EU) Nr. 910/2014 entspricht und das System durch Erweiterung der Vertrauensstufen-Enumeration auf PSD2, MiCA oder beliebige weitere regulatorische Rahmen adaptierbar ist.
 
-**Anspruch 4** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass jede angenommene Zahlungsanweisung einen Eintrag in einer dreischichtigen Prüfstruktur erzeugt, bestehend aus: (a) HMAC-SHA256-Verkettung aller Einträge; (b) Merkle-Baum-Aggregation in konfigurierbaren Zeitintervallen; (c) Verankerung des Merkle-Roots in einem öffentlichen Distributed-Ledger, sodass ein Dritter ohne Vertrauen in den Betreiber die Vollständigkeit und Unverändertheit des Prüfprotokolls verifizieren kann.
+**Anspruch 3** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass der Empfänger-Identifikator ausschließlich als SHA-256-Hash gespeichert wird, niemals als Klartext, womit Art. 5 Abs. 1 lit. c DSGVO (Datenminimierung) als Designeigenschaft des Systems erfüllt wird; der Berechtigte kann bei Kenntnis des Klartext-Identifikators die Zugehörigkeit zu einer Transaktion berechnen, ohne dass der Systembetreiber den Klartextidentifikator kennen muss.
 
-**Anspruch 5** (abhängig von 4): Verfahren nach Anspruch 4, dadurch gekennzeichnet, dass der Merkle-Root in einem öffentlichen Data-Availability-Layer (Celestia, Solana oder äquivalent) verankert wird, wobei die Übertragung automatisiert über eine konfigurierbare Regelmäßigkeit (z.B. stündlich) ausgeführt wird und die Blocknummer sowie der Transaktions-Hash als maschinenlesbare Quittung im Prüfprotokoll gespeichert werden.
+**Anspruch 4** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass die rein-funktionale AML-Prüfschnittstelle durch das Typsystem der Implementierungssprache strukturell erzwungen wird (unveränderliche Selbstreferenz, kein Netzwerkzugriff, keine Zustandsmutation), sodass die Datenschutzeigenschaft für formale Verifikationswerkzeuge zugänglich ist.
 
-**Anspruch 6** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass die eIDAS-Vertrauensstufe genau zwei Werte `Low` und `High` annimmt, wobei `High` einer qualifizierten elektronischen Signatur gemäß eIDAS-Verordnung (EU) Nr. 910/2014 entspricht, und das System durch Erweiterung der Vertrauensstufen-Enumeration auf weitere Regulierungsrahmen (PSD2, MiCA) adaptierbar ist.
+**Anspruch 5** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass das dreischichtige Prüfprotokoll aus (a) der HMAC-Kette von GBM-0 als Schicht 1, (b) einem Merkle-Baum über alle HMAC-Werte eines konfigurierbaren Zeitintervalls als Schicht 2, und (c) der Verankerung des Merkle-Root in einem öffentlichen DA-Layer (Celestia, Solana oder äquivalent) als Schicht 3 besteht, wobei die Blocknummer und der Transaktions-Hash als maschinenlesbare Quittung im Prüfprotokoll gespeichert werden.
 
-**Anspruch 7** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass das Verfahren ohne wesentliche Protokolländerungen auf beliebige ISO-4217-Währungen, auf tokenisierte Wertpapiere mit ISIN-Bezeichner oder auf CBDC-Einheiten beliebiger Zentralbanken anwendbar ist.
+**Anspruch 6** (abhängig von 5): Verfahren nach Anspruch 5, dadurch gekennzeichnet, dass ein Dritter ohne Vertrauen in den Systembetreiber, allein durch Kenntnis der Merkle-Root-Quittung und des öffentlichen DA-Layers, die Vollständigkeit und Unverändertheit des gesamten Zahlungsprüfprotokolls verifizieren kann.
 
-**Anspruch 8** (abhängig von 4): System nach Anspruch 4, dadurch gekennzeichnet, dass die HMAC-Prüfkette und die Merkle-Batch-Daten über eine authentifizierte API-Schnittstelle für regulatorische Behörden (BaFin, EZB) exportierbar sind, einschließlich vollständiger Merkle-Inklusions-Beweise für einzelne Transaktionen.
+**Anspruch 7** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass das Verfahren ohne wesentliche Protokolländerungen auf beliebige ISO-4217-Währungen, auf tokenisierte Wertpapiere (ISIN) oder auf CBDC-Einheiten beliebiger Zentralbanken anwendbar ist — gemäß der Assetklassen-Agnostik von GBM-1 Anspruch 3.
+
+**Anspruch 8** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass der Signaturmechanismus die Kryptoagilität von GBM-1 Anspruch 5 erbt und der Wechsel auf ML-DSA (NIST FIPS 204) ohne Änderung der Zahlungsanweisungs-Datenstruktur möglich ist.
 
 ---
 
 ## 4. Zusammenfassung (Abstract)
 
-Ein computerimplementiertes Verfahren nimmt kryptografisch signierte, eIDAS-konforme Zahlungsanweisungen entgegen. Die Identität des Zahlers wird durch einen W3C Decentralised Identifier nachgewiesen, der Empfänger wird ausschließlich als SHA-256-Hash gespeichert (DSGVO-Designkonformität). Ein rein-funktionaler AML-Scanner prüft jede Transaktion ohne Netzwerkzugriff. Angenommene Transaktionen werden in einer dreischichtigen Prüfstruktur aus per-Eintrag-HMAC-Verkettung, Merkle-Batch-Aggregation und öffentlicher DA-Layer-Verankerung protokolliert. Das Verfahren ist ohne Protokolländerungen auf beliebige Währungen (USD, GBP, CHF) und Finanzwerte übertragbar. (≈ 100 Wörter)
+Aufbauend auf dem SIGIL-Protokoll (GBM-0) und dem SIGIL-Bridge-Core-Transferprimiti (GBM-1) nimmt das Verfahren eIDAS-konforme Zahlungsanweisungen entgegen. Die Vertrauensstufe und der Betrag werden vor jedem Datenbankschreibvorgang erzwungen; abgelehnte Anweisungen hinterlassen keinen Protokolleintrag. Der Empfänger wird strukturell als SHA-256-Hash pseudonymisiert (DSGVO Art. 5 als Designeigenschaft). Eine rein-funktionale AML-Schnittstelle schreibt ausschließlich Kategorie-Hashes. Das dreischichtige Prüfprotokoll (HMAC + Merkle + Public-DA) wurde am 2026-02-24 in Produktion mit Celestia-Mocha-Verankerung nachgewiesen. Das Verfahren ist währungsagnostisch und kryptoagil. (≈ 100 Wörter)
 
 ---
 
-*SIGIL-EURO Patent — 2026-02-25 — Patent Pending — EUPL-1.2*
+*SIGIL-EURO · GBM-2 · 2026-02-25 · Patent Pending · EUPL-1.2*
