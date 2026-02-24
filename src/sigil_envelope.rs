@@ -372,6 +372,202 @@ impl SigilKeypair {
     }
 }
 
+// ── Post-Quantum Crypto Agility — PATENT PRIORITY BLOCK ──────────────────────
+//
+// PATENT NOTE (2026-02-25):
+// The following code block documents a PLANNED design for algorithm-agile
+// signature verification in the SIGIL Protocol, intended for FORWARD
+// COMPATIBILITY with post-quantum cryptography (PQC) standards finalized by
+// NIST in 2024 (FIPS 203 / 204 / 205).
+//
+// This constitutes a DISCLOSED DESIGN INTENT establishing prior art for the
+// Crypto-Agile SIGIL Envelope as of 2026-02-25.
+//
+// Relevant NIST standards:
+//   - FIPS 204: ML-DSA (Module-Lattice-Based Digital Signature Algorithm)
+//     formerly known as CRYSTALS-Dilithium
+//   - FIPS 205: SLH-DSA (Stateless Hash-Based Digital Signatures Algorithm)
+//     formerly known as SPHINCS+
+//
+// Required Cargo dependencies (NOT YET ACTIVATED — add when enabling):
+//   [dependencies]
+//   pqcrypto-dilithium  = "0.5"   # ML-DSA-65 / Dilithium3 (NIST Level 3)
+//   pqcrypto-sphincsplus = "0.7"  # SLH-DSA  (NIST Level 3)
+//   pqcrypto-traits      = "0.3"  # Shared traits for pqcrypto family
+//
+// Activation plan:
+//   [features]
+//   post-quantum = ["dep:pqcrypto-dilithium", "dep:pqcrypto-sphincsplus"]
+//
+// All PQ code below is commented out. It compiles when the pqcrypto-*
+// dependencies are added. It is kept here as a construction blueprint.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ┌─────────────────────────────────────────────────────────────────────────┐
+// │  CRYPTO AGILITY DESIGN — COMMENTED OUT — POST-QUANTUM PREPARATION      │
+// └─────────────────────────────────────────────────────────────────────────┘
+//
+// Step 1: Algorithm identifier — self-describing signature type
+//
+// #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+// pub enum SignatureAlgorithm {
+//     /// Ed25519 (RFC 8032) — Current default, NOT quantum-safe.
+//     /// Vulnerable to Shor's algorithm on a CRQC (≥4000 logical qubits).
+//     Ed25519,
+//
+//     /// ML-DSA-65 (NIST FIPS 204, formerly CRYSTALS-Dilithium3).
+//     /// Quantum-safe. Security level: NIST Level 3 (≡ AES-192).
+//     /// Signature size: 3293 bytes | Public key: 1952 bytes.
+//     MlDsa65,
+//
+//     /// SLH-DSA-SHA2-128s (NIST FIPS 205, formerly SPHINCS+).
+//     /// Hash-based, conservative quantum-safe assumption.
+//     /// Signature size: 7856 bytes | Public key: 32 bytes.
+//     SlhDsaSha2128s,
+// }
+//
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// Step 2: Crypto-agile envelope — algorithm field self-identifies the scheme
+//
+// /// Algorithm-agile SIGIL envelope.
+// /// The `algorithm` field tells the verifier how to interpret `signature`
+// /// and `public_key_hint` without out-of-band coordination.
+// #[derive(Debug, Clone, Serialize, Deserialize)]
+// pub struct SigilEnvelopeV2 {
+//     /// DID of the requesting agent.
+//     pub identity: String,
+//     /// Policy verdict.
+//     pub verdict: Verdict,
+//     /// Signing time, ISO 8601 (UTC, millisecond precision).
+//     pub timestamp: String,
+//     /// 16-byte random nonce, hex-encoded.
+//     pub nonce: String,
+//     /// Which algorithm produced `signature`.
+//     pub algorithm: SignatureAlgorithm,
+//     /// Signature bytes, base64url-encoded (size varies by algorithm).
+//     pub signature: String,
+//     /// Optional: base64url-encoded public key for self-contained verification.
+//     /// In production, always resolve from the DID Document instead.
+//     #[serde(skip_serializing_if = "Option::is_none")]
+//     pub public_key_hint: Option<String>,
+//     /// Human-readable reason (required when verdict = blocked).
+//     #[serde(skip_serializing_if = "Option::is_none")]
+//     pub reason: Option<String>,
+// }
+//
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// Step 3: Unified signing trait — same interface for all algorithms
+//
+// pub trait SigilSigner: Send + Sync {
+//     fn algorithm(&self) -> SignatureAlgorithm;
+//     fn sign_bytes(&self, msg: &[u8]) -> Vec<u8>;
+//     fn verifying_key_bytes(&self) -> Vec<u8>;
+// }
+//
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// Step 4: Ed25519 adapter (CURRENT) — implements the unified trait
+//
+// impl SigilSigner for SigilKeypair {
+//     fn algorithm(&self) -> SignatureAlgorithm { SignatureAlgorithm::Ed25519 }
+//     fn sign_bytes(&self, msg: &[u8]) -> Vec<u8> {
+//         use ed25519_dalek::Signer;
+//         self.signing_key.sign(msg).to_bytes().to_vec()
+//     }
+//     fn verifying_key_bytes(&self) -> Vec<u8> {
+//         self.signing_key.verifying_key().as_bytes().to_vec()
+//     }
+// }
+//
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// Step 5: ML-DSA-65 (Dilithium3) adapter — POST-QUANTUM path
+//   Requires: pqcrypto-dilithium = "0.5" in Cargo.toml
+//   Feature:  post-quantum
+//
+// #[cfg(feature = "post-quantum")]
+// pub struct MlDsaKeypair {
+//     public_key:  pqcrypto_dilithium::dilithium3::PublicKey,
+//     secret_key:  pqcrypto_dilithium::dilithium3::SecretKey,
+// }
+//
+// #[cfg(feature = "post-quantum")]
+// impl MlDsaKeypair {
+//     pub fn generate() -> Self {
+//         use pqcrypto_dilithium::dilithium3;
+//         let (pk, sk) = dilithium3::keypair();
+//         Self { public_key: pk, secret_key: sk }
+//     }
+// }
+//
+// #[cfg(feature = "post-quantum")]
+// impl SigilSigner for MlDsaKeypair {
+//     fn algorithm(&self) -> SignatureAlgorithm { SignatureAlgorithm::MlDsa65 }
+//
+//     fn sign_bytes(&self, msg: &[u8]) -> Vec<u8> {
+//         use pqcrypto_dilithium::dilithium3;
+//         use pqcrypto_traits::sign::DetachedSignature;
+//         let sig = dilithium3::detached_sign(msg, &self.secret_key);
+//         sig.as_bytes().to_vec()
+//     }
+//
+//     fn verifying_key_bytes(&self) -> Vec<u8> {
+//         use pqcrypto_traits::sign::PublicKey;
+//         self.public_key.as_bytes().to_vec()
+//     }
+// }
+//
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// Step 6: Generic verify — dispatches by algorithm field
+//
+// pub fn verify_sigil_envelope_v2(
+//     envelope: &SigilEnvelopeV2,
+//     public_key_bytes: &[u8],
+// ) -> Result<bool> {
+//     let canonical = SigilEnvelope::canonical_bytes(
+//         &envelope.identity, &envelope.verdict,
+//         &envelope.timestamp, &envelope.nonce,
+//     );
+//     match envelope.algorithm {
+//         SignatureAlgorithm::Ed25519 => {
+//             let key: [u8; 32] = public_key_bytes.try_into()
+//                 .map_err(|_| anyhow!("Ed25519 key must be 32 bytes"))?;
+//             let vk = VerifyingKey::from_bytes(&key)?;
+//             let sig_bytes: [u8; 64] = base64ct::Base64UrlUnpadded::decode_vec(&envelope.signature)?
+//                 .try_into().map_err(|_| anyhow!("Ed25519 sig must be 64 bytes"))?;
+//             Ok(vk.verify(&canonical, &Signature::from_bytes(&sig_bytes)).is_ok())
+//         }
+//         #[cfg(feature = "post-quantum")]
+//         SignatureAlgorithm::MlDsa65 => {
+//             use pqcrypto_dilithium::dilithium3;
+//             use pqcrypto_traits::sign::{DetachedSignature, PublicKey};
+//             let pk = dilithium3::PublicKey::from_bytes(public_key_bytes)?;
+//             let sig_bytes = base64ct::Base64UrlUnpadded::decode_vec(&envelope.signature)?;
+//             let sig = dilithium3::DetachedSignature::from_bytes(&sig_bytes)?;
+//             Ok(dilithium3::verify_detached_signature(&sig, &canonical, &pk).is_ok())
+//         }
+//         #[cfg(not(feature = "post-quantum"))]
+//         SignatureAlgorithm::MlDsa65 | SignatureAlgorithm::SlhDsaSha2128s => {
+//             Err(anyhow!("Post-quantum algorithms require feature = 'post-quantum'"))
+//         }
+//     }
+// }
+//
+// ─────────────────────────────────────────────────────────────────────────────
+// END POST-QUANTUM CRYPTO AGILITY BLOCK
+// Migration path: Ed25519 → ML-DSA-65
+//   1. Add pqcrypto-dilithium + pqcrypto-traits to Cargo.toml
+//   2. Enable feature "post-quantum"
+//   3. Generate MlDsaKeypair for new agents
+//   4. Register ML-DSA public key in SIGIL Registry (DID Document)
+//   5. Existing Ed25519 envelopes remain valid (backward-compatible via algorithm field)
+//   6. Phase out Ed25519 after transition period (recommended: 24 months)
+// ─────────────────────────────────────────────────────────────────────────────
+
+
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
 #[cfg(test)]
