@@ -117,7 +117,7 @@ Die Schnittstelle ist als **synchrone, rein-funktionale Abbildung** definiert. D
 
 **Anspruch 7** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass das Verfahren ohne wesentliche Protokolländerungen auf beliebige ISO-4217-Währungen, auf tokenisierte Wertpapiere (ISIN) oder auf CBDC-Einheiten beliebiger Zentralbanken anwendbar ist — gemäß der Assetklassen-Agnostik von GBM-1 Anspruch 3.
 
-**Anspruch 8** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass der Signaturmechanismus die Kryptoagilität von GBM-1 Anspruch 5 erbt und der Wechsel auf ML-DSA (NIST FIPS 204) ohne Änderung der Zahlungsanweisungs-Datenstruktur möglich ist.
+**Anspruch 8** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass der Signaturmechanismus die Kryptoagilität von GBM-5 (SIGIL Crypto-Agility, 2026-02-25) erbt und der Wechsel auf ML-DSA (NIST FIPS 204) ohne Änderung der Zahlungsanweisungs-Datenstruktur möglich ist.
 
 ---
 

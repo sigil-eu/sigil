@@ -115,7 +115,7 @@ Als optionale Erweiterung kann die Zahlungskomponente des ServiceIntent als SIGI
 
 **Anspruch 5** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass die Zahlungskomponente des ServiceIntent als SIGIL-EURO-Zahlungsanweisung (GBM-2, 2026-02-25) implementiert werden kann, sodass Dienstleistungsverträge eIDAS-konform, mit SHA-256-pseudonymisiertem Empfänger und dreischichtigem Prüfprotokoll abgewickelt werden.
 
-**Anspruch 6** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass der Signaturmechanismus die Kryptoagilität von GBM-1 Anspruch 5 erbt, sodass der Wechsel auf ML-DSA (NIST FIPS 204) für alle am Vertrag beteiligten DID-Identitäten ohne Strukturänderung des ServiceIntent durchführbar ist.
+**Anspruch 6** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass der Signaturmechanismus die Kryptoagilität von GBM-5 (SIGIL Crypto-Agility, 2026-02-25) erbt, sodass der Wechsel auf ML-DSA (NIST FIPS 204) für alle am Vertrag beteiligten DID-Identitäten ohne Strukturänderung des ServiceIntent durchführbar ist.
 
 ---
 
