@@ -2,14 +2,15 @@
 
 ## DE Gebrauchsmuster · eIDAS-konformes Zahlungsgateway auf SIGIL-Bridge-Basis
 
-## GBM-2 der SIGIL-Patentfamilie
+## GBM-3 der SIGIL-Patentfamilie
 
 **Anmeldedatum:** 2026-02-25
 **Anmelder:** Benjamin Küttner, [Adresse eintragen]
 **Priorität / Stammanmeldungen:**
 
 - GBM-0: DE Gebrauchsmuster SIGIL Protocol, eingereicht 2026-02-23
-- GBM-1: DE Gebrauchsmuster SIGIL-Bridge-Core, eingereicht 2026-02-25 (gleichzeitig)
+- GBM-1: DE Gebrauchsmuster SIGIL Crypto-Agility, eingereicht 2026-02-25 (gleichzeitig)
+- GBM-2: DE Gebrauchsmuster SIGIL-Bridge-Core, eingereicht 2026-02-25 (gleichzeitig)
 **Lizenz:** EUPL-1.2 + Kommerzielle Lizenz
 
 ---
@@ -18,11 +19,11 @@
 
 **An:** Deutsches Patent- und Markenamt, 80297 München
 
-Betreff: Gebrauchsmusteranmeldung — SIGIL-EURO (GBM-2)
+Betreff: Gebrauchsmusteranmeldung — SIGIL-EURO (GBM-3)
 
 Sehr geehrte Damen und Herren,
 
-hiermit melden wir ein Gebrauchsmuster für ein computerimplementiertes eIDAS-konformes Zahlungsgateway an, das auf dem SIGIL-Protokoll (GBM-0) und dem SIGIL-Bridge-Core (GBM-1) aufbaut. Die Erfindung wurde am 2026-02-24 im Echtbetrieb erfolgreich demonstriert (Audit Sequence #15; Verankerung des Merkle-Root in einem öffentlichen Distributed-Ledger nachgewiesen, beispielhaft mittels Celestia Mocha, Block 10221745).
+hiermit melden wir ein Gebrauchsmuster für ein computerimplementiertes eIDAS-konformes Zahlungsgateway an, das auf dem SIGIL-Protokoll (GBM-0) und dem SIGIL-Bridge-Core (GBM-2) aufbaut. Die Erfindung wurde am 2026-02-24 im Echtbetrieb erfolgreich demonstriert (Audit Sequence #15; Verankerung des Merkle-Root in einem öffentlichen Distributed-Ledger nachgewiesen, beispielhaft mittels Celestia Mocha, Block 10221745).
 
 Mit freundlichen Grüßen
 Benjamin Küttner
@@ -33,15 +34,15 @@ Benjamin Küttner
 
 ### 2.1 Technisches Gebiet
 
-Die Erfindung betrifft ein computerimplementiertes Zahlungsgateway für eIDAS-konforme, kryptografisch signierte Zahlungsanweisungen mit integrierter AML/CTF-Prüfung, DSGVO-konformer Empfänger-Pseudonymisierung und dreischichtigem, tamper-evidentem Prüfprotokoll — aufgebaut auf dem SIGIL-Protokoll (GBM-0) und dem SIGIL-Bridge-Core-Transferprimiti (GBM-1).
+Die Erfindung betrifft ein computerimplementiertes Zahlungsgateway für eIDAS-konforme, kryptografisch signierte Zahlungsanweisungen mit integrierter AML/CTF-Prüfung, DSGVO-konformer Empfänger-Pseudonymisierung und dreischichtigem, tamper-evidentem Prüfprotokoll — aufgebaut auf dem SIGIL-Protokoll (GBM-0) und dem SIGIL-Bridge-Core-Transferprimiti (GBM-2).
 
 ### 2.2 Bezug zu den Stamm-Schutzrechten
 
 **GBM-0** liefert die Identitätsinfrastruktur (W3C-DID, Ed25519-Signatur), die rein-funktionale Prüfschnittstelle und den HMAC-Prüfprotokollrahmen, den SIGIL-EURO als Schicht 1 seines dreischichtigen Prüfprotokolls verwendet.
 
-**GBM-1** liefert das Transfer-Intent-Primitiv und die Atomaritätsgarantie, auf der die Zahlungsanweisung (`PaymentIntent`) als spezialisierter Transfer-Intent für Fiat-Währungen und CBDCs aufsetzt.
+**GBM-2** liefert das Transfer-Intent-Primitiv und die Atomaritätsgarantie, auf der die Zahlungsanweisung (`PaymentIntent`) als spezialisierter Transfer-Intent für Fiat-Währungen und CBDCs aufsetzt.
 
-Die vorliegende Erfindung fügt gegenüber GBM-0 und GBM-1 hinzu:
+Die vorliegende Erfindung fügt gegenüber GBM-0 und GBM-2 hinzu:
 
 - eIDAS-Vertrauensstufen-Enforcement vor jedem Datenbankschreibvorgang
 - DSGVO-konforme Empfänger-Pseudonymisierung als Designeigenschaft (nicht Richtlinie)
@@ -61,7 +62,7 @@ Bestehende CBDC-Architekturen (EP4181458A1, EP3850567A1) beschreiben Ausstellung
 
 **Zahlungsanweisung (`PaymentIntent`) — erweiterter Transfer-Intent:**
 
-Alle Felder von GBM-1 BridgeIntent plus:
+Alle Felder von GBM-2 BridgeIntent plus:
 
 - eIDAS-Vertrauensstufe (`Low` / `High`) — gemäß eIDAS-VO (EU) Nr. 910/2014
 - ISO-4217-Währungsbezeichner
@@ -94,9 +95,9 @@ Die Schnittstelle ist als **synchrone, rein-funktionale Abbildung** definiert. D
 
 ## 3. Ansprüche (Claims)
 
-**Anspruch 1** (unabhängig, aufbauend auf GBM-0 und GBM-1): Computerimplementiertes Verfahren zur eIDAS-konformen Verarbeitung einer kryptografisch signierten Zahlungsanweisung unter Verwendung des SIGIL-Protokolls (GBM-0, 2026-02-23) und des SIGIL-Bridge-Core-Transferprimitivs (GBM-1, 2026-02-25), dadurch gekennzeichnet, dass es:
+**Anspruch 1** (unabhängig, aufbauend auf GBM-0 und GBM-2): Computerimplementiertes Verfahren zur eIDAS-konformen Verarbeitung einer kryptografisch signierten Zahlungsanweisung unter Verwendung des SIGIL-Protokolls (GBM-0, 2026-02-23) und des SIGIL-Bridge-Core-Transferprimitivs (GBM-2, 2026-02-25), dadurch gekennzeichnet, dass es:
 
-(a) eine Zahlungsanweisung entgegennimmt, die neben den Pflichtfeldern des GBM-1 BridgeIntent zusätzlich eine eIDAS-kompatible Vertrauensstufe, einen SHA-256-Hash des Empfänger-Identifikators (nicht den Klartext), den Betrag in kleinster Währungseinheit, eine ISO-4217-Währungsbezeichnung und eine digitale Signatur gemäß GBM-0 über alle vorgenannten Felder umfasst;
+(a) eine Zahlungsanweisung entgegennimmt, die neben den Pflichtfeldern des GBM-2 BridgeIntent zusätzlich eine eIDAS-kompatible Vertrauensstufe, einen SHA-256-Hash des Empfänger-Identifikators (nicht den Klartext), den Betrag in kleinster Währungseinheit, eine ISO-4217-Währungsbezeichnung und eine digitale Signatur gemäß GBM-0 über alle vorgenannten Felder umfasst;
 
 (b) die digitale Signatur gemäß dem Signaturrahmen von GBM-0 verifiziert;
 
@@ -116,16 +117,16 @@ Die Schnittstelle ist als **synchrone, rein-funktionale Abbildung** definiert. D
 
 **Anspruch 6** (abhängig von 5): Verfahren nach Anspruch 5, dadurch gekennzeichnet, dass ein Dritter ohne Vertrauen in den Systembetreiber, allein durch Kenntnis der Merkle-Root-Quittung und des öffentlichen DA-Layers, die Vollständigkeit und Unverändertheit des gesamten Zahlungsprüfprotokolls verifizieren kann.
 
-**Anspruch 7** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass das Verfahren ohne wesentliche Protokolländerungen auf beliebige ISO-4217-Währungen, auf tokenisierte Wertpapiere (ISIN) oder auf CBDC-Einheiten beliebiger Zentralbanken anwendbar ist — gemäß der Assetklassen-Agnostik von GBM-1 Anspruch 3.
+**Anspruch 7** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass das Verfahren ohne wesentliche Protokolländerungen auf beliebige ISO-4217-Währungen, auf tokenisierte Wertpapiere (ISIN) oder auf CBDC-Einheiten beliebiger Zentralbanken anwendbar ist — gemäß der Assetklassen-Agnostik von GBM-2 Anspruch 3.
 
-**Anspruch 8** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass der Signaturmechanismus die Kryptoagilität von GBM-5 (SIGIL Crypto-Agility, 2026-02-25) erbt und der Wechsel auf ML-DSA (NIST FIPS 204) ohne Änderung der Zahlungsanweisungs-Datenstruktur möglich ist.
+**Anspruch 8** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass der Signaturmechanismus die Kryptoagilität von GBM-1 (SIGIL Crypto-Agility, 2026-02-25) erbt und der Wechsel auf ML-DSA (NIST FIPS 204) ohne Änderung der Zahlungsanweisungs-Datenstruktur möglich ist.
 
 ---
 
 ## 4. Zusammenfassung (Abstract)
 
-Aufbauend auf dem SIGIL-Protokoll (GBM-0) und dem SIGIL-Bridge-Core-Transferprimiti (GBM-1) nimmt das Verfahren eIDAS-konforme Zahlungsanweisungen entgegen. Die Vertrauensstufe und der Betrag werden vor jedem Datenbankschreibvorgang erzwungen; abgelehnte Anweisungen hinterlassen keinen Protokolleintrag. Der Empfänger wird strukturell als SHA-256-Hash pseudonymisiert (DSGVO Art. 5 als Designeigenschaft). Eine rein-funktionale AML-Schnittstelle schreibt ausschließlich Kategorie-Hashes. Das dreischichtige Prüfprotokoll (HMAC + Merkle + öffentlicher DA-Layer mit blockbasiertem Verweis) wurde am 2026-02-24 in Produktion nachgewiesen. Das Verfahren ist DA-Layer-agnostisch, währungsagnostisch und kryptoagil. (≈ 100 Wörter)
+Aufbauend auf dem SIGIL-Protokoll (GBM-0) und dem SIGIL-Bridge-Core-Transferprimiti (GBM-2) nimmt das Verfahren eIDAS-konforme Zahlungsanweisungen entgegen. Die Vertrauensstufe und der Betrag werden vor jedem Datenbankschreibvorgang erzwungen; abgelehnte Anweisungen hinterlassen keinen Protokolleintrag. Der Empfänger wird strukturell als SHA-256-Hash pseudonymisiert (DSGVO Art. 5 als Designeigenschaft). Eine rein-funktionale AML-Schnittstelle schreibt ausschließlich Kategorie-Hashes. Das dreischichtige Prüfprotokoll (HMAC + Merkle + öffentlicher DA-Layer mit blockbasiertem Verweis) wurde am 2026-02-24 in Produktion nachgewiesen. Das Verfahren ist DA-Layer-agnostisch, währungsagnostisch und kryptoagil. (≈ 100 Wörter)
 
 ---
 
-*SIGIL-EURO · GBM-2 · 2026-02-25 · Patent Pending · EUPL-1.2*
+*SIGIL-EURO · GBM-3 · 2026-02-25 · Patent Pending · EUPL-1.2*

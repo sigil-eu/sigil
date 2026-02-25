@@ -2,14 +2,15 @@
 
 ## DE Gebrauchsmuster · DID-gebundener Dienstleistungs-Treuhand mit deterministischer Schlichtung
 
-## GBM-4 der SIGIL-Patentfamilie
+## GBM-5 der SIGIL-Patentfamilie
 
 **Anmeldedatum:** 2026-02-25
 **Anmelder:** Benjamin Küttner, [Adresse eintragen]
 **Priorität / Stammanmeldungen:**
 
 - GBM-0: DE Gebrauchsmuster SIGIL Protocol, eingereicht DPMA 2026-02-23
-- GBM-1: DE Gebrauchsmuster SIGIL-Bridge-Core, eingereicht 2026-02-25 (gleichzeitig)
+- GBM-1: DE Gebrauchsmuster SIGIL Crypto-Agility, eingereicht 2026-02-25 (gleichzeitig)
+- GBM-2: DE Gebrauchsmuster SIGIL-Bridge-Core, eingereicht 2026-02-25 (gleichzeitig)
 **Lizenz:** EUPL-1.2 + Kommerzielle Lizenz
 
 ---
@@ -18,11 +19,11 @@
 
 **An:** Deutsches Patent- und Markenamt, 80297 München
 
-Betreff: Gebrauchsmusteranmeldung — SIGIL-SERVICEBRIDGE (GBM-4)
+Betreff: Gebrauchsmusteranmeldung — SIGIL-SERVICEBRIDGE (GBM-5)
 
 Sehr geehrte Damen und Herren,
 
-hiermit melden wir ein Gebrauchsmuster für ein computerimplementiertes Treuhandgateway für Dienstleistungsverträge an, das auf dem SIGIL-Protokoll (GBM-0, DPMA 2026-02-23) und dem SIGIL-Bridge-Core-Transferprimiti (GBM-1, 2026-02-25) aufbaut. Die wesentliche Neuheit gegenüber GBM-0 und GBM-1 liegt in der deterministischen, zurechenbaren Streitschlichtung durch einen zum Zeitpunkt der Vertragsschließung bindend festgelegten DID-identifizierten Schlichter sowie in der HMAC-verketteten Lebenszyklusprüfkette aller Zustandsübergänge.
+hiermit melden wir ein Gebrauchsmuster für ein computerimplementiertes Treuhandgateway für Dienstleistungsverträge an, das auf dem SIGIL-Protokoll (GBM-0, DPMA 2026-02-23) und dem SIGIL-Bridge-Core-Transferprimiti (GBM-2, 2026-02-25) aufbaut. Die wesentliche Neuheit gegenüber GBM-0 und GBM-2 liegt in der deterministischen, zurechenbaren Streitschlichtung durch einen zum Zeitpunkt der Vertragsschließung bindend festgelegten DID-identifizierten Schlichter sowie in der HMAC-verketteten Lebenszyklusprüfkette aller Zustandsübergänge.
 
 Mit freundlichen Grüßen
 Benjamin Küttner
@@ -37,9 +38,9 @@ Die Erfindung betrifft ein computerimplementiertes Gateway, das digitale Zahlung
 
 ### 2.2 Bezug zu den Stamm-Schutzrechten
 
-**GBM-0 (DPMA 2026-02-23)** liefert das DID-Identitätssystem (Käufer, Anbieter, Schlichter), die Ed25519-Signaturinfrastruktur und den HMAC-Prüfprotokollrahmen. **GBM-1 (2026-02-25)** liefert das Transfer-Intent-Primitiv als Zahlungskomponente des Treuhandvertrags sowie die Atomaritätsgarantie für die Zahlungsfreigabe.
+**GBM-0 (DPMA 2026-02-23)** liefert das DID-Identitätssystem (Käufer, Anbieter, Schlichter), die Ed25519-Signaturinfrastruktur und den HMAC-Prüfprotokollrahmen. **GBM-2 (2026-02-25)** liefert das Transfer-Intent-Primitiv als Zahlungskomponente des Treuhandvertrags sowie die Atomaritätsgarantie für die Zahlungsfreigabe.
 
-Die vorliegende Erfindung (GBM-4) fügt hinzu:
+Die vorliegende Erfindung (GBM-5) fügt hinzu:
 
 - Meilensteinbasiertes Lebenszyklusmodell (Pending → Locked → Delivered → Settled / Disputed → Refunded)
 - Vorab festgelegter, DID-gebundener Schlichter als deterministischer Konfliktlösungsmechanismus
@@ -59,10 +60,10 @@ Keine bekannte Lösung kombiniert: (1) vorab festgelegten DID-Schlichter, (2) HM
 Eine `ServiceIntent`-Datenstruktur enthält:
 
 - DID von Käufer, Anbieter und Schlichter (GBM-0-Identitätssystem)
-- Zahlungsbetrag und -währung als GBM-1-BridgeIntent-Komponente
+- Zahlungsbetrag und -währung als GBM-2-BridgeIntent-Komponente
 - Geordnete Meilensteinliste als Lieferungsnachweis
 - Streitigkeitsfenster (konfigurierbare Dauer nach Lieferungsmeldung)
-- Timeout-Feld für Gesamtvertragslaufzeit (GBM-1 Atomaritätsmechanismus)
+- Timeout-Feld für Gesamtvertragslaufzeit (GBM-2 Atomaritätsmechanismus)
 
 **Lebenszyklusautomat:**
 
@@ -85,17 +86,17 @@ Jeder Zustandsübergang erzeugt einen HMAC-verketteten Eintrag gemäß GBM-0. De
 
 Der Schlichter ist durch seinen W3C-DID-Identifikator eindeutig identifiziert. Die Schlichtungsentscheidung (`Erledigt` oder `Erstattet`) ist durch seinen DID vollständig attributiert — rechtlich zurechenbar, forensisch nachvollziehbar. Das Schlichtungsprotokoll verbleibt als HMAC-verketteter Eintrag unveränderlich im Prüfprotokoll.
 
-**Integration mit SIGIL-EURO (GBM-2):**
+**Integration mit SIGIL-EURO (GBM-3):**
 
-Als optionale Erweiterung kann die Zahlungskomponente des ServiceIntent als SIGIL-EURO-PaymentIntent (GBM-2) implementiert werden, sodass die Dienstleistungszahlung eIDAS-konform, pseudonymisiert und dreischichtig protokolliert wird.
+Als optionale Erweiterung kann die Zahlungskomponente des ServiceIntent als SIGIL-EURO-PaymentIntent (GBM-3) implementiert werden, sodass die Dienstleistungszahlung eIDAS-konform, pseudonymisiert und dreischichtig protokolliert wird.
 
 ---
 
 ## 3. Ansprüche (Claims)
 
-**Anspruch 1** (unabhängig, aufbauend auf GBM-0 und GBM-1): Computerimplementiertes Verfahren zur Verwaltung eines meilensteinbasierten Dienstleistungsvertrags unter Verwendung des SIGIL-Protokolls (GBM-0, DPMA 2026-02-23) und des SIGIL-Bridge-Core-Transferprimitivs (GBM-1, 2026-02-25), dadurch gekennzeichnet, dass es:
+**Anspruch 1** (unabhängig, aufbauend auf GBM-0 und GBM-2): Computerimplementiertes Verfahren zur Verwaltung eines meilensteinbasierten Dienstleistungsvertrags unter Verwendung des SIGIL-Protokolls (GBM-0, DPMA 2026-02-23) und des SIGIL-Bridge-Core-Transferprimitivs (GBM-2, 2026-02-25), dadurch gekennzeichnet, dass es:
 
-(a) eine Dienstleistungsanweisung entgegennimmt, die neben den Feldern des GBM-1-BridgeIntent die WC3-DID-Identifikatoren von Käufer, Anbieter und einem vorab festgelegten Schlichter, eine geordnete Meilensteinliste und ein Streitfristfeld umfasst;
+(a) eine Dienstleistungsanweisung entgegennimmt, die neben den Feldern des GBM-2-BridgeIntent die WC3-DID-Identifikatoren von Käufer, Anbieter und einem vorab festgelegten Schlichter, eine geordnete Meilensteinliste und ein Streitfristfeld umfasst;
 
 (b) den Zahlungsbetrag in gesicherter Verwahrung einfriert und den Intent in den Zustand `Gesperrt` versetzt, sobald der Käufer bereitstellt;
 
@@ -103,7 +104,7 @@ Als optionale Erweiterung kann die Zahlungskomponente des ServiceIntent als SIGI
 
 (d) bei Eingang der Abnahme durch den Käufer innerhalb der Streitfrist den Zahlungsbetrag an den Anbieter freigibt und den Intent als `Erledigt` markiert;
 
-(e) bei Ablauf des Gesamttimeouts ohne Lieferungsmeldung den Zahlungsbetrag an den Käufer zurückführt gemäß dem Atomaritätsmechanismus von GBM-1 Anspruch 1(d);
+(e) bei Ablauf des Gesamttimeouts ohne Lieferungsmeldung den Zahlungsbetrag an den Käufer zurückführt gemäß dem Atomaritätsmechanismus von GBM-2 Anspruch 1(d);
 
 (f) jeden Zustandsübergang in der HMAC-verketteten Prüfkette des SIGIL-Prüfprotokollrahmens (GBM-0) protokolliert, wobei jeder Eintrag den DID der auslösenden Partei, den neuen Zustand und den HMAC-Wert des Vorgängereintrags enthält.
 
@@ -113,16 +114,16 @@ Als optionale Erweiterung kann die Zahlungskomponente des ServiceIntent als SIGI
 
 **Anspruch 4** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass die HMAC-verkettete Prüfkette aller Zustandsübergänge über eine authentifizierte Schnittstelle für Gerichts-, Steuer- oder Regulierungszwecke exportierbar ist und die lückenlose Vertragshistorie einschließlich Meilensteinprotokollen nachweist.
 
-**Anspruch 5** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass die Zahlungskomponente des ServiceIntent als SIGIL-EURO-Zahlungsanweisung (GBM-2, 2026-02-25) implementiert werden kann, sodass Dienstleistungsverträge eIDAS-konform, mit SHA-256-pseudonymisiertem Empfänger und dreischichtigem Prüfprotokoll abgewickelt werden.
+**Anspruch 5** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass die Zahlungskomponente des ServiceIntent als SIGIL-EURO-Zahlungsanweisung (GBM-3, 2026-02-25) implementiert werden kann, sodass Dienstleistungsverträge eIDAS-konform, mit SHA-256-pseudonymisiertem Empfänger und dreischichtigem Prüfprotokoll abgewickelt werden.
 
-**Anspruch 6** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass der Signaturmechanismus die Kryptoagilität von GBM-5 (SIGIL Crypto-Agility, 2026-02-25) erbt, sodass der Wechsel auf ML-DSA (NIST FIPS 204) für alle am Vertrag beteiligten DID-Identitäten ohne Strukturänderung des ServiceIntent durchführbar ist.
+**Anspruch 6** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass der Signaturmechanismus die Kryptoagilität von GBM-1 (SIGIL Crypto-Agility, 2026-02-25) erbt, sodass der Wechsel auf ML-DSA (NIST FIPS 204) für alle am Vertrag beteiligten DID-Identitäten ohne Strukturänderung des ServiceIntent durchführbar ist.
 
 ---
 
 ## 4. Zusammenfassung (Abstract)
 
-Aufbauend auf dem SIGIL-Protokoll (GBM-0, DPMA 2026-02-23) und dem SIGIL-Bridge-Core (GBM-1, 2026-02-25) verwaltet das Verfahren Dienstleistungsverträge als meilensteingebundene Treuhand. Käufer, Anbieter und Schlichter werden durch W3C-DIDs identifiziert; der Schlichter wird bindend vor Vertragsschluss festgelegt. Jeder Zustandsübergang (Pending → Locked → Delivered → Settled | Disputed → Refunded) wird HMAC-verkettet protokolliert. Bei Streitigkeit entscheidet ausschließlich der vorab festgelegte, kryptografisch authentifizierte Schlichter — deterministisch, zurechenbar, nicht stochastisch. Die Zahlung kann als SIGIL-EURO-Intent (GBM-2) eIDAS-konform abgewickelt werden. Der Signaturmechanismus erbt die Kryptoagilität von GBM-1. (≈ 100 Wörter)
+Aufbauend auf dem SIGIL-Protokoll (GBM-0, DPMA 2026-02-23) und dem SIGIL-Bridge-Core (GBM-2, 2026-02-25) verwaltet das Verfahren Dienstleistungsverträge als meilensteingebundene Treuhand. Käufer, Anbieter und Schlichter werden durch W3C-DIDs identifiziert; der Schlichter wird bindend vor Vertragsschluss festgelegt. Jeder Zustandsübergang (Pending → Locked → Delivered → Settled | Disputed → Refunded) wird HMAC-verkettet protokolliert. Bei Streitigkeit entscheidet ausschließlich der vorab festgelegte, kryptografisch authentifizierte Schlichter — deterministisch, zurechenbar, nicht stochastisch. Die Zahlung kann als SIGIL-EURO-Intent (GBM-3) eIDAS-konform abgewickelt werden. Der Signaturmechanismus erbt die Kryptoagilität von GBM-2. (≈ 100 Wörter)
 
 ---
 
-*SIGIL-SERVICEBRIDGE · GBM-4 · 2026-02-25 · Patent Pending · EUPL-1.2*
+*SIGIL-SERVICEBRIDGE · GBM-5 · 2026-02-25 · Patent Pending · EUPL-1.2*

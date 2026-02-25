@@ -2,12 +2,12 @@
 
 ## DE Gebrauchsmuster · Algorithmusagnostische, quantensichere Signatururüstung des SIGIL-Protokolls
 
-## GBM-5 der SIGIL-Patentfamilie
+## GBM-1 der SIGIL-Patentfamilie
 
 **Anmeldedatum:** 2026-02-25
 **Anmelder:** Benjamin Küttner, [Adresse eintragen]
 **Priorität / Stammanmeldung:** DE Gebrauchsmuster SIGIL Protocol (GBM-0), eingereicht DPMA 2026-02-23
-**Gilt für:** GBM-0 (SIGIL Protocol), GBM-1 (Bridge Core), GBM-2 (EURO), GBM-3 (FXBridge), GBM-4 (ServiceBridge)
+**Gilt für:** GBM-0 (SIGIL Protocol), GBM-2 (Bridge Core), GBM-3 (EURO), GBM-4 (FXBridge), GBM-5 (ServiceBridge)
 **Lizenz:** EUPL-1.2 + Kommerzielle Lizenz
 
 ---
@@ -16,11 +16,11 @@
 
 **An:** Deutsches Patent- und Markenamt, 80297 München
 
-Betreff: Gebrauchsmusteranmeldung — SIGIL Crypto-Agility (GBM-5)
+Betreff: Gebrauchsmusteranmeldung — SIGIL Crypto-Agility (GBM-1)
 
 Sehr geehrte Damen und Herren,
 
-hiermit melden wir ein Gebrauchsmuster als Erweiterung des SIGIL-Protokolls (GBM-0, DPMA 2026-02-23) für eine **algorithmusagnostische, quantensichere Signatur-Upgrade-Architektur** an. Die Erfindung betrifft das gesamte SIGIL-Protokollfamilie (GBM-0 bis GBM-4) und schützt insbesondere den Mechanismus, mit dem im SIGIL-Protokoll verwendete Signaturverfahren — ohne Protokollbruch, ohne Kompatibilitätsverlust und ohne Serviceunterbrechung — auf post-quanten-sichere Algorithmen nach NIST FIPS 204/205 umgestellt werden können.
+hiermit melden wir ein Gebrauchsmuster als Erweiterung des SIGIL-Protokolls (GBM-0, DPMA 2026-02-23) für eine **algorithmusagnostische, quantensichere Signatur-Upgrade-Architektur** an. Die Erfindung betrifft das gesamte SIGIL-Protokollfamilie (GBM-0 bis GBM-5) und schützt insbesondere den Mechanismus, mit dem im SIGIL-Protokoll verwendete Signaturverfahren — ohne Protokollbruch, ohne Kompatibilitätsverlust und ohne Serviceunterbrechung — auf post-quanten-sichere Algorithmen nach NIST FIPS 204/205 umgestellt werden können.
 
 Der Quellcode-Nachweis der Offenbarung liegt im SIGIL-Protokoll-Repository vor, Commit `ca10eeb`, 2026-02-25: `sigil_envelope.rs` enthält den vollständig ausgearbeiteten Crypto-Agility-Entwurf als kommentierten Codeblock mit Zeitstempel.
 
@@ -39,7 +39,7 @@ Die Erfindung betrifft ein computerimplementiertes Verfahren zum **unterbrechung
 
 ### 2.2 Bezug zum Stamm-Schutzrecht (GBM-0)
 
-Das SIGIL-Protokoll (GBM-0, DPMA 2026-02-23) schützt einen kryptografisch signierten Identitätsumschlag (`_sigil`-Envelope) mit Ed25519-Signatur. Die Signatur ist dort als festes Verfahren definiert. Die vorliegende Erfindung (GBM-5) erweitert GBM-0 — und alle darauf aufbauenden Schutzrechte GBM-1 bis GBM-4 — um eine algorithmusagnostische Signaturarchitektur, die:
+Das SIGIL-Protokoll (GBM-0, DPMA 2026-02-23) schützt einen kryptografisch signierten Identitätsumschlag (`_sigil`-Envelope) mit Ed25519-Signatur. Die Signatur ist dort als festes Verfahren definiert. Die vorliegende Erfindung (GBM-1) erweitert GBM-0 — und alle darauf aufbauenden Schutzrechte GBM-2 bis GBM-5 — um eine algorithmusagnostische Signaturarchitektur, die:
 
 1. den eingesetzten Algorithmus als **maschinenlesbares Selbstbeschreibungsfeld** im Protokolldatensatz führt
 2. einen **einheitlichen Signing-Trait** (Interface) definiert, hinter dem beliebige Signaturalgorithmen als auswechselbare Implementierungen fungieren
@@ -116,7 +116,7 @@ Der vollständige Entwurf ist als dokumentierter Codeblock mit Zeitstempel in `s
 
 ## 3. Ansprüche (Claims)
 
-**Anspruch 1** (unabhängig — Plattformanspruch Kryptoagilität): Computerimplementiertes Verfahren zur algorithmusagnostischen Signierung und Verifizierung von Protokolldatensätzen des SIGIL-Protokolls (GBM-0, DPMA 2026-02-23) und dessen Erweiterungen (GBM-1 bis GBM-4), dadurch gekennzeichnet, dass:
+**Anspruch 1** (unabhängig — Plattformanspruch Kryptoagilität): Computerimplementiertes Verfahren zur algorithmusagnostischen Signierung und Verifizierung von Protokolldatensätzen des SIGIL-Protokolls (GBM-0, DPMA 2026-02-23) und dessen Erweiterungen (GBM-2 bis GBM-5), dadurch gekennzeichnet, dass:
 
 (a) jeder signierte Protokolldatensatz ein maschinenlesbares Algorithmus-Identifikationsfeld enthält, das den verwendeten Signaturalgorithmus eindeutig benennt;
 
@@ -141,14 +141,14 @@ wobei ein Verifier jeden Eintrag anhand seines eigenen `algorithm`-Feldes unabh�
 
 **Anspruch 6** (abhängig von 4): Verfahren nach Anspruch 4, dadurch gekennzeichnet, dass die algorithmische Selektion anhand maschinenlesbarer Latenzschwellen oder Archivkennzeichnungen automatisiert erfolgt, ohne dass der Nutzer der Signierschnittstelle den Algorithmus manuell auswählen muss.
 
-**Anspruch 7** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass das Verfahren auf alle Protokolldatensätze der SIGIL-Patentfamilie anwendbar ist: den SIGIL-Identitätsumschlag (GBM-0), den Bridge-Transfer-Intent (GBM-1), die Zahlungsanweisung (GBM-2), die Routing-Attestation (GBM-3) und den Dienstleistungsvertrag (GBM-4), ohne dass eine der genannten Datenstrukturen geändert werden muss.
+**Anspruch 7** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass das Verfahren auf alle Protokolldatensätze der SIGIL-Patentfamilie anwendbar ist: den SIGIL-Identitätsumschlag (GBM-0), den Bridge-Transfer-Intent (GBM-2), die Zahlungsanweisung (GBM-3), die Routing-Attestation (GBM-4) und den Dienstleistungsvertrag (GBM-5), ohne dass eine der genannten Datenstrukturen geändert werden muss.
 
 ---
 
 ## 4. Zusammenfassung (Abstract)
 
-Das Verfahren erweitert das SIGIL-Protokoll (GBM-0, DPMA 2026-02-23) und alle darauf aufbauenden Schutzrechte (GBM-1–GBM-4) um eine algorithmusagnostische Signatur-Upgrade-Architektur. Jeder Protokolldatensatz trägt ein maschinenlesbares Algorithmus-Identifikationsfeld; der Verifier wählt ohne externe Konfiguration den korrekten Prüfalgorithmus. Ein einheitliches Signing-Interface kapselt klassische (Ed25519) und post-quanten-sichere Verfahren (ML-DSA nach NIST FIPS 204, SLH-DSA nach NIST FIPS 205) hinter derselben Schnittstelle. Hybrides Signing ermöglicht Ed25519 für latenzkritische Einträge und ML-DSA für regulatorische Archiveinträge im selben Protokollstrom. Die Migration ist schrittweise und ohne Serviceunterbrechung durchführbar. Alle existierenden Datensätze bleiben dauerhaft valide. (≈ 110 Wörter)
+Das Verfahren erweitert das SIGIL-Protokoll (GBM-0, DPMA 2026-02-23) und alle darauf aufbauenden Schutzrechte (GBM-2–GBM-5) um eine algorithmusagnostische Signatur-Upgrade-Architektur. Jeder Protokolldatensatz trägt ein maschinenlesbares Algorithmus-Identifikationsfeld; der Verifier wählt ohne externe Konfiguration den korrekten Prüfalgorithmus. Ein einheitliches Signing-Interface kapselt klassische (Ed25519) und post-quanten-sichere Verfahren (ML-DSA nach NIST FIPS 204, SLH-DSA nach NIST FIPS 205) hinter derselben Schnittstelle. Hybrides Signing ermöglicht Ed25519 für latenzkritische Einträge und ML-DSA für regulatorische Archiveinträge im selben Protokollstrom. Die Migration ist schrittweise und ohne Serviceunterbrechung durchführbar. Alle existierenden Datensätze bleiben dauerhaft valide. (≈ 110 Wörter)
 
 ---
 
-*SIGIL CRYPTO-AGILITY · GBM-5 · Erweiterung von GBM-0 · 2026-02-25 · Patent Pending · EUPL-1.2*
+*SIGIL CRYPTO-AGILITY · GBM-1 · Erweiterung von GBM-0 · 2026-02-25 · Patent Pending · EUPL-1.2*

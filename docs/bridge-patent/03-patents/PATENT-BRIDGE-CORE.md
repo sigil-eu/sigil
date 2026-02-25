@@ -2,11 +2,13 @@
 
 ## DE Gebrauchsmuster · Erweiterung des SIGIL-Protokolls auf Wertübertragung
 
-## GBM-1 der SIGIL-Patentfamilie
+## GBM-2 der SIGIL-Patentfamilie
 
 **Anmeldedatum:** 2026-02-25
 **Anmelder:** Benjamin Küttner, [Adresse eintragen]
-**Priorität / Stammanmeldung:** DE Gebrauchsmuster SIGIL Protocol, eingereicht 2026-02-23 (Aktenzeichen ausstehend) — **GBM-0 der SIGIL-Patentfamilie**
+**Priorität / Stammanmeldungen:**
+- GBM-0: DE Gebrauchsmuster SIGIL Protocol, eingereicht DPMA 2026-02-23
+- GBM-1: DE Gebrauchsmuster SIGIL Crypto-Agility, eingereicht 2026-02-25 (gleichzeitig)
 **Lizenz:** EUPL-1.2 + Kommerzielle Lizenz
 
 ---
@@ -15,11 +17,11 @@
 
 **An:** Deutsches Patent- und Markenamt, 80297 München
 
-Betreff: Gebrauchsmusteranmeldung — SIGIL-BRIDGE-CORE (GBM-1)
+Betreff: Gebrauchsmusteranmeldung — SIGIL-BRIDGE-CORE (GBM-2)
 
 Sehr geehrte Damen und Herren,
 
-hiermit melden wir ein Gebrauchsmuster als Weiterentwicklung des SIGIL-Protokolls (GBM-0, eingereicht 2026-02-23) an. Die vorliegende Erfindung erweitert das dort geschützte Identitäts- und Prüfprotokoll auf den Bereich der **atomaren Übertragung digitaler Vermögenswerte** zwischen verteilten Ledgern. Die SIGIL-Bridge-Core-Architektur bildet die Plattformbasis für alle spezialisierten SIGIL-Bridge-Anwendungen (SIGIL-EURO, SIGIL-FXBRIDGE, SIGIL-SERVICEBRIDGE), die als abhängige Gebrauchsmuster GBM-2 bis GBM-4 gleichzeitig angemeldet werden.
+hiermit melden wir ein Gebrauchsmuster als Weiterentwicklung des SIGIL-Protokolls (GBM-0, eingereicht 2026-02-23) an. Die vorliegende Erfindung erweitert das dort geschützte Identitäts- und Prüfprotokoll auf den Bereich der **atomaren Übertragung digitaler Vermögenswerte** zwischen verteilten Ledgern. Die SIGIL-Bridge-Core-Architektur bildet die Plattformbasis für alle spezialisierten SIGIL-Bridge-Anwendungen (SIGIL-EURO, SIGIL-FXBRIDGE, SIGIL-SERVICEBRIDGE), die als abhängige Gebrauchsmuster GBM-3 bis GBM-5 gleichzeitig angemeldet werden.
 
 Anliegend übersenden wir: Beschreibung, Ansprüche und Zusammenfassung.
 
@@ -36,7 +38,7 @@ Die Erfindung betrifft computerimplementierte Verfahren zur kryptografisch gesic
 
 ### 2.2 Bezug zum Stamm-Schutzrecht (GBM-0)
 
-Das SIGIL-Protokoll (GBM-0) schützt ein allgemeines Sicherheitsrahmenwerk für KI-Agenten-Interaktionen, bestehend aus einem signierten Identitätsumschlag (`_sigil`-Envelope), einer rein-funktionalen Inhaltsprüfschnittstelle, einer HMAC-verketteten Prüfprotokollkette und einem Tresorsystem. GBM-0 definiert die **Identitätsinfrastruktur** (W3C-Decentralised Identifiers, Ed25519-Signaturen) und die **Prüfprotokollarchitektur**, auf der GBM-1 aufbaut.
+Das SIGIL-Protokoll (GBM-0) schützt ein allgemeines Sicherheitsrahmenwerk für KI-Agenten-Interaktionen, bestehend aus einem signierten Identitätsumschlag (`_sigil`-Envelope), einer rein-funktionalen Inhaltsprüfschnittstelle, einer HMAC-verketteten Prüfprotokollkette und einem Tresorsystem. GBM-0 definiert die **Identitätsinfrastruktur** (W3C-Decentralised Identifiers, Ed25519-Signaturen) und die **Prüfprotokollarchitektur**, auf der GBM-2 aufbaut.
 
 Die vorliegende Erfindung überträgt diese Infrastruktur auf einen neuen Anwendungsbereich: **die Übertragung von Werten statt Informationen**.
 
@@ -98,7 +100,7 @@ Der Signaturmechanismus ist hinter einem algorithmisch neutralen Signing-Interfa
 
 **Anspruch 4** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass die HMAC-Prüfkette periodisch durch Berechnung eines Merkle-Baums über alle Eintragsauthentifizierungswerte und Verankerung des resultierenden Merkle-Roots in einem öffentlichen Distributed-Ledger extern verifizierbar gemacht wird, sodass ein Dritter ohne Vertrauen in den Systembetreiber die Vollständigkeit und Unverändertheit des Prüfprotokolls nachweisen kann.
 
-**Anspruch 5** (abhängig von 1, Verweis auf GBM-5): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass der Signaturmechanismus gemäß dem SIGIL-Crypto-Agility-Verfahren (GBM-5, 2026-02-25) implementiert ist: ein maschinenlesbares Algorithmus-Identifikationsfeld im Protokolldatensatz benennt den eingesetzten Signaturalgorithmus, und der Verifier wählt anhand dieses Feldes ohne externe Konfiguration den korrekten Prüfalgorithmus — insbesondere den Wechsel auf ML-DSA (NIST FIPS 204) ohne Protokolländerung ermöglichend.
+**Anspruch 5** (abhängig von 1, Verweis auf GBM-1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass der Signaturmechanismus gemäß dem SIGIL-Crypto-Agility-Verfahren (GBM-1, 2026-02-25) implementiert ist: ein maschinenlesbares Algorithmus-Identifikationsfeld im Protokolldatensatz benennt den eingesetzten Signaturalgorithmus, und der Verifier wählt anhand dieses Feldes ohne externe Konfiguration den korrekten Prüfalgorithmus — insbesondere den Wechsel auf ML-DSA (NIST FIPS 204) ohne Protokolländerung ermöglichend.
 
 **Anspruch 6** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass die dezentralen Identifikatoren gemäß W3C DID Core 1.0 spezifiziert sind und mit eIDAS-2.0-konformen Wallets und qualifizierten elektronischen Signaturträgern kompatibel sind, sodass das Verfahren ohne Schnittstellenänderung in regulierte europäische Finanzinfrastrukturen integriert werden kann.
 
@@ -106,8 +108,8 @@ Der Signaturmechanismus ist hinter einem algorithmisch neutralen Signing-Interfa
 
 ## 4. Zusammenfassung (Abstract)
 
-Ein computerimplementiertes Verfahren erweitert das SIGIL-Protokoll (GBM-0, 2026-02-23) auf die atomare Übertragung digitaler Vermögenswerte zwischen DID-identifizierten Parteien. Vermögenswerte der Klassen Währung, Wertpapier und On-Chain-Token werden durch ein einheitliches Transfer-Intent-Primitiv mit kryptografischer Hash-Präimage-Sperre und konfigurierbarem Timeout übertragen. Jeder Zustandsübergang wird in der HMAC-verketteten Prüfkette des SIGIL-Prüfprotokollrahmens dokumentiert; periodisch wird ein Merkle-Root in einem öffentlichen Distributed-Ledger verankert. Bei verketteten Transfers wird eine Timeout-Invariante serverseitig erzwungen. Der Signaturmechanismus ist kryptoagil: ein algorithmisches Identifikationsfeld im Protokoll ermöglicht den Wechsel auf post-quanten-sichere Verfahren (ML-DSA, NIST FIPS 204) ohne Protokolländerung. Das Verfahren bildet die Plattformbasis für SIGIL-EURO (GBM-2), SIGIL-FXBRIDGE (GBM-3) und SIGIL-SERVICEBRIDGE (GBM-4). (≈ 120 Wörter)
+Ein computerimplementiertes Verfahren erweitert das SIGIL-Protokoll (GBM-0, 2026-02-23) auf die atomare Übertragung digitaler Vermögenswerte zwischen DID-identifizierten Parteien. Vermögenswerte der Klassen Währung, Wertpapier und On-Chain-Token werden durch ein einheitliches Transfer-Intent-Primitiv mit kryptografischer Hash-Präimage-Sperre und konfigurierbarem Timeout übertragen. Jeder Zustandsübergang wird in der HMAC-verketteten Prüfkette des SIGIL-Prüfprotokollrahmens dokumentiert; periodisch wird ein Merkle-Root in einem öffentlichen Distributed-Ledger verankert. Bei verketteten Transfers wird eine Timeout-Invariante serverseitig erzwungen. Der Signaturmechanismus ist kryptoagil: ein algorithmisches Identifikationsfeld im Protokoll ermöglicht den Wechsel auf post-quanten-sichere Verfahren (ML-DSA, NIST FIPS 204) ohne Protokolländerung. Das Verfahren bildet die Plattformbasis für SIGIL-EURO (GBM-3), SIGIL-FXBRIDGE (GBM-4) und SIGIL-SERVICEBRIDGE (GBM-5). (≈ 120 Wörter)
 
 ---
 
-*SIGIL-BRIDGE-CORE · GBM-1 · 2026-02-25 · Patent Pending · EUPL-1.2*
+*SIGIL-BRIDGE-CORE · GBM-2 · 2026-02-25 · Patent Pending · EUPL-1.2*
