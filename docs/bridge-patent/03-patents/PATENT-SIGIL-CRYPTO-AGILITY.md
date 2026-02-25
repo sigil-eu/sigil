@@ -1,6 +1,6 @@
 # PATENT — SIGIL CRYPTO-AGILITY
 
-## DE Gebrauchsmuster · Algorithmusagnostische, quantensichere Signatururüstung des SIGIL-Protokolls
+## DE Gebrauchsmuster · Algorithmusagnostische, quantensichere Signaturarchitektur für das SIGIL-Protokoll (Sovereign Identity-Gated Interaction Layer) und dessen Erweiterungen
 
 ## GBM-1 der SIGIL-Patentfamilie
 
@@ -39,7 +39,15 @@ Die Erfindung betrifft ein computerimplementiertes Verfahren zum **unterbrechung
 
 ### 2.2 Bezug zum Stamm-Schutzrecht (GBM-0)
 
-Das SIGIL-Protokoll (GBM-0, DPMA 2026-02-23) schützt einen kryptografisch signierten Identitätsumschlag (`_sigil`-Envelope) mit Ed25519-Signatur. Die Signatur ist dort als festes Verfahren definiert. Die vorliegende Erfindung (GBM-1) erweitert GBM-0 — und alle darauf aufbauenden Schutzrechte GBM-2 bis GBM-5 — um eine algorithmusagnostische Signaturarchitektur, die:
+Das **SIGIL-Protokoll** (ausgesprochen: *Sovereign Identity-Gated Interaction Layer*, GBM-0, DPMA 2026-02-23) schützt einen kryptografisch signierten Identitätsumschlag (`_sigil`-Envelope) mit Ed25519-Signatur. Die Signatur ist dort als festes Verfahren definiert. Die vorliegende Erfindung (GBM-1) erweitert GBM-0 — und alle darauf aufbauenden Schutzrechte — um eine algorithmusagnostische Signaturarchitektur, die auf alle folgenden Protokollschichten anwendbar ist:
+
+- **GBM-0 SIGIL Core:** `SigilEnvelope`, DID-Identitätsnachweis, Browser-Extension-Interception
+- **GBM-2 Bridge Core:** `BridgeIntent`, HTLC-Preimage-Hash, HMAC-Audit-Chain
+- **GBM-3 SIGIL-EURO:** `PaymentIntent`, eIDAS-qualifizierte Signatur, AML-Scanner-Attestation
+- **GBM-4 SIGIL-FXBridge:** `MultiHopIntent`, `RouteAttestation` (Ed25519 → ML-DSA-65 Drop-in), `FxContext`-Signierung
+- **GBM-5 SIGIL-ServiceBridge:** `ServiceIntent`, Arbitrator-DID-Binding, Escrow-Zustandsattestationen
+
+Die algorithmusagnostische Architektur (GBM-1) ist auf allen genannten Schichten ohne Protokollbruch aktivierbar und erweitert das ursprüngliche Ed25519-Verfahren (GBM-0) um:
 
 1. den eingesetzten Algorithmus als **maschinenlesbares Selbstbeschreibungsfeld** im Protokolldatensatz führt
 2. einen **einheitlichen Signing-Trait** (Interface) definiert, hinter dem beliebige Signaturalgorithmen als auswechselbare Implementierungen fungieren
@@ -58,23 +66,34 @@ NIST hat 2024 drei quantensichere Signaturstandards finalisiert:
 
 ### 2.4 Stand der Technik und Abgrenzung
 
-Bestehende Protokolle (TLS 1.3, Signal Protocol, PGP) verwenden feste Algorithusmuskonfigurationen oder verhandeln Algorithmen über externe Handshakes (Cipher Suites). Keines dieser Systeme implementiert:
+Bestehende Protokolle (TLS 1.3, Signal Protocol, PGP, SWIFT MX ISO 20022) verwenden feste Algorithmuskonfigurationen oder verhandeln Algorithmen über externe Handshakes (Cipher Suites). Keines dieser Systeme implementiert:
 
 1. Ein **eingebettetes Selbstbeschreibungsfeld** im Datensatz, das den Algorithmus pro Eintrag individuell festlegt
 2. Einen **einheitlichen Signing-Trait**, der sowohl klassische als auch PQ-Algorithmen hinter derselben Schnittstelle kapselt
 3. **Hybrides Signing** mit algorithmisch unterschiedlichen Einträgen innerhalb desselben Protokollstroms
+4. **DA-Layer-Agnostizismus in Kombination mit PQ-Signing:** `DaProof`-Datensätze tragen den `da_provider`-Bezeichner und den `algorithm`-Bezeichner als unabhängige Selbstbeschreibungsfelder — das System ist damit sowohl DA-Layer-agnostisch (Celestia, Avail, EigenDA) als auch algorithmusagnostisch (Ed25519, ML-DSA, SLH-DSA) ohne externe Konfiguration
+5. **Protokollübergreifende Kryptoagilität**: Dieselbe `SigilSigner`-Schnittstelle signiert `BridgeIntent`, `PaymentIntent`, `RouteAttestation`, `ServiceIntent` und DA-Anchoring-Beweise — ein Algorithmustausch wirkt gleichzeitig auf alle 5 Protokollebenen
 
 ### 2.5 Offenbarung der Erfindung
 
 **Schritt 1: Algorithmus-Selbstbeschreibung**
 
-Jeder signierte Protokolldatensatz im SIGIL-System (Envelope, BridgeIntent, PaymentIntent, RouteAttestation, ServiceIntent) enthält ein `algorithm`-Feld mit einem maschinenlesbaren Algorithmus-Identifikator. Aktuell definierte Werte:
+Jeder signierte Protokolldatensatz im SIGIL-System enthält ein `algorithm`-Feld mit einem maschinenlesbaren Algorithmus-Identifikator. Dies gilt für alle fünf Protokollebenen:
 
-| Wert | Algorithmus | Quantensicher | Signaturegröße | Schlüsselgröße |
-|---|---|---|---|---|
-| `Ed25519` | RFC 8032 | ❌ (CRQC-angreifbar) | 64 Byte | 32 Byte |
-| `MlDsa65` | NIST FIPS 204 (Dilithium3) | ✅ NIST Level 3 | 3.293 Byte | 1.952 Byte |
-| `SlhDsaSha2128s` | NIST FIPS 205 (SPHINCS+) | ✅ Hash-basiert | 7.856 Byte | 32 Byte |
+- **GBM-0/GBM-2:** `SigilEnvelope.algorithm`, `BridgeIntent.algorithm`
+- **GBM-3:** `PaymentIntent.algorithm`, `AmlAttestation.algorithm`
+- **GBM-4:** `RouteAttestation.algorithm`, `FxContext.algorithm`
+- **GBM-5:** `ServiceIntent.algorithm`, `ArbitrationRecord.algorithm`
+- **DA-Layer:** `DaProof.algorithm` (unabhängig von `DaProof.da_provider`)
+
+Aktuell definierte Algorithmus-Identifikatoren:
+
+| Wert | Standard | Quantensicher | Signaturegröße | Schlüsselgröße | Empfohlen für |
+|---|---|---|---|---|---|
+| `Ed25519` | RFC 8032 | ❌ CRQC-angreifbar | 64 Byte | 32 Byte | Live-Transaktionen (< 10 ms) |
+| `MlDsa65` | NIST FIPS 204 | ✅ NIST Level 3 | 3.293 Byte | 1.952 Byte | Regulatorische Archiveinträge |
+| `SlhDsaSha2128s` | NIST FIPS 205 | ✅ Hash-basiert | 7.856 Byte | 32 Byte | Höchste Konservativität |
+| `MlKem768` | NIST FIPS 206 | ✅ (Schlüsselaustausch) | n.a. | 1.184 Byte | Future: PQ Key Encapsulation |
 
 Der Verifier liest das `algorithm`-Feld und wählt den Verifizierungspfad **ohne externe Konfiguration, ohne Versionsnummer, ohne Handshake**.
 
@@ -116,7 +135,7 @@ Der vollständige Entwurf ist als dokumentierter Codeblock mit Zeitstempel in `s
 
 ## 3. Ansprüche (Claims)
 
-**Anspruch 1** (unabhängig — Plattformanspruch Kryptoagilität): Computerimplementiertes Verfahren zur algorithmusagnostischen Signierung und Verifizierung von Protokolldatensätzen des SIGIL-Protokolls (GBM-0, DPMA 2026-02-23) und dessen Erweiterungen (GBM-2 bis GBM-5), dadurch gekennzeichnet, dass:
+**Anspruch 1** (unabhängig — Plattformanspruch Kryptoagilität): Computerimplementiertes Verfahren zur algorithmusagnostischen Signierung und Verifizierung von Protokolldatensätzen des **SIGIL-Protokolls (Sovereign Identity-Gated Interaction Layer**, GBM-0, DPMA 2026-02-23) und dessen Erweiterungen (GBM-2 bis GBM-5), dadurch gekennzeichnet, dass:
 
 (a) jeder signierte Protokolldatensatz ein maschinenlesbares Algorithmus-Identifikationsfeld enthält, das den verwendeten Signaturalgorithmus eindeutig benennt;
 
@@ -141,14 +160,40 @@ wobei ein Verifier jeden Eintrag anhand seines eigenen `algorithm`-Feldes unabh�
 
 **Anspruch 6** (abhängig von 4): Verfahren nach Anspruch 4, dadurch gekennzeichnet, dass die algorithmische Selektion anhand maschinenlesbarer Latenzschwellen oder Archivkennzeichnungen automatisiert erfolgt, ohne dass der Nutzer der Signierschnittstelle den Algorithmus manuell auswählen muss.
 
-**Anspruch 7** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass das Verfahren auf alle Protokolldatensätze der SIGIL-Patentfamilie anwendbar ist: den SIGIL-Identitätsumschlag (GBM-0), den Bridge-Transfer-Intent (GBM-2), die Zahlungsanweisung (GBM-3), die Routing-Attestation (GBM-4) und den Dienstleistungsvertrag (GBM-5), ohne dass eine der genannten Datenstrukturen geändert werden muss.
+**Anspruch 7** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass das Verfahren auf alle Protokolldatensätze der SIGIL-Patentfamilie anwendbar ist:
+
+- GBM-0: `SigilEnvelope` (Sovereign Identity-Gated Interaction Layer Identitätsumschlag)
+- GBM-2: `BridgeIntent` (HTLC-Transferprimitive, Asset-agnostisch über 7 Anlageklassen)
+- GBM-3: `PaymentIntent` und `AmlAttestation` (eIDAS-konforme Zahlungsanweisung)
+- GBM-4: `MultiHopIntent`, `RouteAttestation` und `FxContext` (Devisenübertragung mit kryptografisch attestion Routing-Entscheidung)
+- GBM-5: `ServiceIntent` und `ArbitrationRecord` (Dienst-Escrow mit vorbestimmtem DID-Schlichter)
+- DA-Layer: `DaProof` (DA-Layer-agnostischer Blockchain-Anker, `da_provider`-Feld unabhängig von `algorithm`-Feld)
+
+ohne dass eine der genannten Datenstrukturen verändert werden muss; der Algorithmustausch ist durch Drop-in-Ersatz der `SigilSigner`-Implementierung möglich.
+
+**Anspruch 8** (abhängig von 1, neu): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass Protokolldatensätze aus verschiedenen Protokollebenen (GBM-0 bis GBM-5) unterschiedliche Signaturalgorithmen tragen können und ein Verifier die korrekte Prüfmethode für jeden Datensatz anhand dessen eigenem `algorithm`-Feld bestimmt, sodass in einem systemweiten Protokollfluss gleichzeitig klassische (Ed25519) und post-quanten-sichere (ML-DSA-65, SLH-DSA) Datensätze koexistieren, ohne dass der Verifier für jeden Datensatztyp gesondert konfiguriert werden muss.
 
 ---
 
 ## 4. Zusammenfassung (Abstract)
 
-Das Verfahren erweitert das SIGIL-Protokoll (GBM-0, DPMA 2026-02-23) und alle darauf aufbauenden Schutzrechte (GBM-2–GBM-5) um eine algorithmusagnostische Signatur-Upgrade-Architektur. Jeder Protokolldatensatz trägt ein maschinenlesbares Algorithmus-Identifikationsfeld; der Verifier wählt ohne externe Konfiguration den korrekten Prüfalgorithmus. Ein einheitliches Signing-Interface kapselt klassische (Ed25519) und post-quanten-sichere Verfahren (ML-DSA nach NIST FIPS 204, SLH-DSA nach NIST FIPS 205) hinter derselben Schnittstelle. Hybrides Signing ermöglicht Ed25519 für latenzkritische Einträge und ML-DSA für regulatorische Archiveinträge im selben Protokollstrom. Die Migration ist schrittweise und ohne Serviceunterbrechung durchführbar. Alle existierenden Datensätze bleiben dauerhaft valide. (≈ 110 Wörter)
+Das Verfahren erweitert das **SIGIL-Protokoll (Sovereign Identity-Gated Interaction Layer**, GBM-0, DPMA 2026-02-23) und alle darauf aufbauenden Schutzrechte (GBM-2–GBM-5) um eine algorithmusagnostische Signatur-Upgrade-Architektur. Jeder Protokolldatensatz — auf allen fünf Protokollebenen sowie im DA-Layer-Anker — trägt ein maschinenlesbares Algorithmus-Identifikationsfeld; der Verifier wählt ohne externe Konfiguration, ohne Protokollhandshake und ohne Versionsnummer den korrekten Prüfalgorithmus. Ein einheitliches `SigilSigner`-Interface kapselt klassische (Ed25519, RFC 8032), gitterbasierte (ML-DSA nach NIST FIPS 204) und Hash-basierte post-quanten-sichere Verfahren (SLH-DSA nach NIST FIPS 205) hinter derselben Schnittstelle. Hybrides Signing ermöglicht Ed25519 für latenzkritische Live-Transaktionen (< 10 ms) und ML-DSA-65 für regulatorische Archiveinträge und `DaProof`-Verankerungen im selben Protokollstrom. Die Migration ist schrittweise, rückwärtskompatibel und ohne Serviceunterbrechung durchführbar. Das Verfahren ist DA-Layer-agnostisch (Celestia, Avail, EigenDA) und protokollübergreifend. Das SIGIL-Protokoll und seine Infrastruktur werden Zentralbanken, Privatpersonen und gemeinnützigen Organisationen dauerhaft kostenlos zur Verfügung gestellt; Einnahmen werden ausschließlich von kommerziellen Finanzintermediären erzielt. (≈ 155 Wörter)
 
 ---
 
-*SIGIL CRYPTO-AGILITY · GBM-1 · Erweiterung von GBM-0 · 2026-02-25 · Patent Pending · EUPL-1.2*
+## 5. Normen und Standards
+
+| Standard | Relevanz für GBM-1 |
+|---|---|
+| NIST FIPS 204 (2024) | ML-DSA — Modul-Gitter-basiertes digitales Signaturverfahren (primäre PQ-Migration) |
+| NIST FIPS 205 (2024) | SLH-DSA — Zustandsloses Hash-basiertes Signaturverfahren (konservative Fallback-Option) |
+| NIST FIPS 206 (2024) | ML-KEM — Schlüsselkapselung (zukünftige Erweiterung für verschlüsselte Kanaleinrichtung) |
+| BSI TR-02102-1 (2025) | Empfehlungen für kryptografische Verfahren — ML-DSA als Empfehlung ab 2025 |
+| ETSI TS 119 312 v1.4 | PQC-Übergangsempfehlungen für qualifizierte elektronische Signaturen (eIDAS 2.0) |
+| eIDAS 2.0 (EU 2024/1183) | Anforderungen an qualifizierte elektronische Signaturen — Kryptoagilität explizit gefordert |
+| W3C DID v1.0 | Decentralized Identifier — Basis der SIGIL-Identitätsschicht in GBM-0–5 |
+| RFC 8032 (Ed25519) | Aktuell genutztes Signaturverfahren — Migration via GBM-1 vorgesehen |
+
+---
+
+*SIGIL CRYPTO-AGILITY · GBM-1 · Sovereign Identity-Gated Interaction Layer · Erweiterung von GBM-0 · 2026-02-25 · Patent Pending · EUPL-1.2*
