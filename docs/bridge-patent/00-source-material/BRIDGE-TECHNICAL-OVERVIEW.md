@@ -10,7 +10,7 @@
 
 ## 1. Project Overview
 
-The SIGIL Bridge is a family of four cryptographic infrastructure components enabling **sovereign, asset-agnostic, atomic transfers** between distributed ledgers, payment systems, and service contracts. It extends the SIGIL Protocol (Gebrauchsmuster DE, DPMA, filed 2026-02-22) into the domain of value settlement.
+The SIGIL Bridge is a family of four cryptographic infrastructure components enabling **sovereign, asset-agnostic, atomic transfers** between distributed ledgers, payment systems, and service contracts. It extends the SIGIL Protocol (Gebrauchsmuster DE, DPMA, filed 2026-02-23) into the domain of value settlement.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -287,7 +287,7 @@ All Rust services bind only to `127.0.0.1` — not reachable from the public int
 
 | Date | Component | Evidence | Location |
 |---|---|---|---|
-| 2026-02-22 | SIGIL Protocol | Patent filed (DE Gebrauchsmuster, DPMA) | DPMA, München |
+| 2026-02-23 | SIGIL Protocol | Patent filed (DE Gebrauchsmuster, DPMA) | DPMA, München |
 | 2026-02-24 | SIGIL-EURO | Audit Seq #15 — SIGILEURO-20260224-512a1bcc | VPS `/home/admin/sigil-euro/audit/` |
 | 2026-02-24 | Celestia | Mocha Block 10221745, Merkle Root 0xfb19a5ff... | Public DA layer |
 | 2026-02-24 | SIGIL-FXBRIDGE | MultiHopIntent SIGIL-FX-1771973584-e2e | VPS `/home/admin/SIGIL-FXBRIDGE/` |

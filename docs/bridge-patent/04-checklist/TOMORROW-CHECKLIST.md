@@ -69,7 +69,7 @@
 
 ### 3.1 Auf DPMA-Mängelrüge antworten
 
-- [ ] DPMA-Rückmeldung zum SIGIL Protocol Gebrauchsmuster (2026-02-22) beobachten
+- [ ] DPMA-Rückmeldung zum SIGIL Protocol Gebrauchsmuster (2026-02-23) beobachten
 - [ ] Falls Mängelrüge zu Claims 8a/8b/8c: Renumerierung einreichen (Frist ~2 Monate)
 - [ ] Für die 4 neuen Bridge-Patente: Claims sind korrekt nummeriert (keine Rüge erwartet)
 

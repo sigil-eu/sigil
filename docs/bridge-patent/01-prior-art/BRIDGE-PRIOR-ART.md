@@ -109,7 +109,7 @@ Six targeted query clusters were run, each mapped to a specific patent claim gro
 
 **Risk Assessment: 🟡 MEDIUM**
 
-**Distinction to assert:** Oracle/IBM/SAP audit solutions are **infrastructure-level, generic**. SIGIL's HMAC chain is **domain-specific to eIDAS-compliant payment intents** and includes: (1) pseudonymised identity (DID not account), (2) AML flag embedding without raw content, (3) Merkle-batch anchoring to a public DA layer (Celestia). This specific combination for financial compliance is new.
+**Distinction to assert:** Oracle/IBM/SAP audit solutions are **infrastructure-level, generic**. SIGIL's HMAC chain is **domain-specific to eIDAS-compliant payment intents** and includes: (1) pseudonymised identity (DID not account), (2) AML flag embedding without raw content, (3) Merkle-batch anchoring to a public DA layer (e.g. Celestia — DA-layer agnostic by design). This specific combination for financial compliance is new.
 
 ---
 

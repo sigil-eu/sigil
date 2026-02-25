@@ -122,7 +122,7 @@ post-quantum = ["dep:pqcrypto-dilithium", "dep:pqcrypto-sphincsplus"]
 ## 7. Bezug zu bestehenden Patenten
 
 Diese Offenbarung erweitert das SIGIL Protocol Gebrauchsmuster (DE DPMA,
-eingereicht 2026-02-22, Claim 16 — Browser Extension / Ed25519) und das
+eingereicht 2026-02-23, Claim 16 — Browser Extension / Ed25519) und das
 SIGIL-Bridge-Core Gebrauchsmuster (DE DPMA, eingereicht 2026-02-25, Claim 6 —
 DID + eIDAS-Wallet-Kompatibilität).
 

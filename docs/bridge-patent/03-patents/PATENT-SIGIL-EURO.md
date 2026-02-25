@@ -22,7 +22,7 @@ Betreff: Gebrauchsmusteranmeldung — SIGIL-EURO (GBM-2)
 
 Sehr geehrte Damen und Herren,
 
-hiermit melden wir ein Gebrauchsmuster für ein computerimplementiertes eIDAS-konformes Zahlungsgateway an, das auf dem SIGIL-Protokoll (GBM-0) und dem SIGIL-Bridge-Core (GBM-1) aufbaut. Die Erfindung wurde am 2026-02-24 im Echtbetrieb erfolgreich demonstriert (Audit Sequence #15, Celestia Mocha Block 10221745).
+hiermit melden wir ein Gebrauchsmuster für ein computerimplementiertes eIDAS-konformes Zahlungsgateway an, das auf dem SIGIL-Protokoll (GBM-0) und dem SIGIL-Bridge-Core (GBM-1) aufbaut. Die Erfindung wurde am 2026-02-24 im Echtbetrieb erfolgreich demonstriert (Audit Sequence #15; Verankerung des Merkle-Root in einem öffentlichen Distributed-Ledger nachgewiesen, beispielhaft mittels Celestia Mocha, Block 10221745).
 
 Mit freundlichen Grüßen
 Benjamin Küttner
@@ -87,7 +87,8 @@ Die Schnittstelle ist als **synchrone, rein-funktionale Abbildung** definiert. D
 **Live-Evidenz (Prioritätsdokument):**
 
 - Zahlungsanweisung `SIGILEURO-20260224-512a1bcc`, €15,00, Audit Seq #15, HTTP 200 ✅
-- Celestia Mocha Block 10221745, Merkle-Root `0xfb19a5ff...`, Timestamp 2026-02-24 ✅
+- Merkle-Root `0xfb19a5ff...` in öffentlichem DA-Layer verankert, Timestamp 2026-02-24 ✅
+  *(beispielhaft realisiert mit: Celestia Mocha, Block 10221745 — austauschbar gegen jeden kompatiblen DA-Layer)*
 
 ---
 
@@ -111,7 +112,7 @@ Die Schnittstelle ist als **synchrone, rein-funktionale Abbildung** definiert. D
 
 **Anspruch 4** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass die rein-funktionale AML-Prüfschnittstelle durch das Typsystem der Implementierungssprache strukturell erzwungen wird (unveränderliche Selbstreferenz, kein Netzwerkzugriff, keine Zustandsmutation), sodass die Datenschutzeigenschaft für formale Verifikationswerkzeuge zugänglich ist.
 
-**Anspruch 5** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass das dreischichtige Prüfprotokoll aus (a) der HMAC-Kette von GBM-0 als Schicht 1, (b) einem Merkle-Baum über alle HMAC-Werte eines konfigurierbaren Zeitintervalls als Schicht 2, und (c) der Verankerung des Merkle-Root in einem öffentlichen DA-Layer (Celestia, Solana oder äquivalent) als Schicht 3 besteht, wobei die Blocknummer und der Transaktions-Hash als maschinenlesbare Quittung im Prüfprotokoll gespeichert werden.
+**Anspruch 5** (abhängig von 1): Verfahren nach Anspruch 1, dadurch gekennzeichnet, dass das dreischichtige Prüfprotokoll aus (a) der HMAC-Kette von GBM-0 als Schicht 1, (b) einem Merkle-Baum über alle HMAC-Werte eines konfigurierbaren Zeitintervalls als Schicht 2, und (c) der Verankerung des Merkle-Root in einem öffentlichen Distributed-Ledger oder Data-Availability-Layer, der die folgenden Eigenschaften aufweist: (i) öffentlich lesbar ohne Genehmigung, (ii) unveränderlich nach Aufnahme, (iii) mit maschinenlesbarem Blockverweis abfragbar, als Schicht 3 besteht, wobei der Blockverweis und der Transaktions-Hash als maschinenlesbare Quittung im Prüfprotokoll gespeichert werden.
 
 **Anspruch 6** (abhängig von 5): Verfahren nach Anspruch 5, dadurch gekennzeichnet, dass ein Dritter ohne Vertrauen in den Systembetreiber, allein durch Kenntnis der Merkle-Root-Quittung und des öffentlichen DA-Layers, die Vollständigkeit und Unverändertheit des gesamten Zahlungsprüfprotokolls verifizieren kann.
 
@@ -123,7 +124,7 @@ Die Schnittstelle ist als **synchrone, rein-funktionale Abbildung** definiert. D
 
 ## 4. Zusammenfassung (Abstract)
 
-Aufbauend auf dem SIGIL-Protokoll (GBM-0) und dem SIGIL-Bridge-Core-Transferprimiti (GBM-1) nimmt das Verfahren eIDAS-konforme Zahlungsanweisungen entgegen. Die Vertrauensstufe und der Betrag werden vor jedem Datenbankschreibvorgang erzwungen; abgelehnte Anweisungen hinterlassen keinen Protokolleintrag. Der Empfänger wird strukturell als SHA-256-Hash pseudonymisiert (DSGVO Art. 5 als Designeigenschaft). Eine rein-funktionale AML-Schnittstelle schreibt ausschließlich Kategorie-Hashes. Das dreischichtige Prüfprotokoll (HMAC + Merkle + Public-DA) wurde am 2026-02-24 in Produktion mit Celestia-Mocha-Verankerung nachgewiesen. Das Verfahren ist währungsagnostisch und kryptoagil. (≈ 100 Wörter)
+Aufbauend auf dem SIGIL-Protokoll (GBM-0) und dem SIGIL-Bridge-Core-Transferprimiti (GBM-1) nimmt das Verfahren eIDAS-konforme Zahlungsanweisungen entgegen. Die Vertrauensstufe und der Betrag werden vor jedem Datenbankschreibvorgang erzwungen; abgelehnte Anweisungen hinterlassen keinen Protokolleintrag. Der Empfänger wird strukturell als SHA-256-Hash pseudonymisiert (DSGVO Art. 5 als Designeigenschaft). Eine rein-funktionale AML-Schnittstelle schreibt ausschließlich Kategorie-Hashes. Das dreischichtige Prüfprotokoll (HMAC + Merkle + öffentlicher DA-Layer mit blockbasiertem Verweis) wurde am 2026-02-24 in Produktion nachgewiesen. Das Verfahren ist DA-Layer-agnostisch, währungsagnostisch und kryptoagil. (≈ 100 Wörter)
 
 ---
 
