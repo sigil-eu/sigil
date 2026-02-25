@@ -178,4 +178,13 @@ Ein computerimplementiertes Protokoll erweitert das SIGIL-Protokoll (GBM-0, DPMA
 
 ---
 
-*SIGIL-BRIDGE-CORE · GBM-2 · 2026-02-25 · Patent Pending · EUPL-1.2*
+## 5. Englische Zusammenfassung / English Summary
+
+**GBM-2 — SIGIL-Bridge-Core · Universal Cryptographic Asset Transfer Protocol**
+
+Building on the SIGIL Protocol (GBM-0, Sovereign Identity-Gated Interaction Layer, DPMA 2026-02-23), this invention provides a universal, atomic asset transfer primitive for any type of value — fiat currencies, CBDC, securities (ISIN), real estate rights, commodities, on-chain tokens, intellectual property licences, and usage rights — between parties identified by W3C Decentralised Identifiers. The Hash Time-Locked Contract (HTLC) mechanism guarantees atomicity: the settled state is reachable exclusively by revealing a preimage S where SHA-256(S) equals the stored hash — no intermediate state exists in which one party holds the asset without the counterparty having revealed S. A server-side timeout chain invariant (`timeout[i] > timeout[i+1]` for all hops) causally guarantees preimage propagation through multi-hop chains. Every state transition is appended to the GBM-0 HMAC audit chain. The signature mechanism inherits quantum-resistance from GBM-1 (Crypto-Agility). GBM-2 forms the platform base for SIGIL-EURO (GBM-3), SIGIL-FXBridge (GBM-4), and SIGIL-ServiceBridge (GBM-5).
+
+---
+
+*SIGIL-BRIDGE-CORE · GBM-2 der SIGIL-Patentfamilie (Sovereign Identity-Gated Interaction Layer) · Anmeldedatum 2026-02-25 · Patent Pending · EUPL-1.2*
+*Benjamin Küttner · Garmischerstrasse 46 B · 86163 Augsburg, Deutschland · <benjamin.kuettner@icloud.com> · <ben@sigil-protocol.org>*

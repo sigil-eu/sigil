@@ -138,4 +138,13 @@ Aufbauend auf GBM-0, GBM-1 und GBM-2 ermöglicht das Verfahren die atomare Über
 
 ---
 
-*SIGIL-FXBRIDGE · GBM-4 · 2026-02-25 · Patent Pending · EUPL-1.2*
+## 5. Englische Zusammenfassung / English Summary
+
+**GBM-4 — SIGIL-FXBridge · Open Atomic Multi-Hop FX Transfer Protocol with Cryptographically Liable Routing Attestation**
+
+Building on GBM-0, GBM-1, and GBM-2, this protocol enables atomic foreign exchange transfers across an arbitrary chain of W3C-DID-identified liquidity providers — central banks, commercial banks, brokers, automated market makers (AMM), and fintech platforms — without requiring individual authorisation. Each hop in the chain is a GBM-2 BridgeIntent augmented with a MiFID II-compliant FX context record documenting exchange rate, rate source, rate timestamp, and validity window per hop. A server-side timeout chain invariant (`timeout[i] > timeout[i+1]`) extended to the FX context causally guarantees preimage propagation. Optionally, the multi-hop intent carries a RouteAttestation: a cryptographically signed document from a DID-identified routing service attesting that all evaluated routes were considered and the optimal one selected — creating deterministic, attributable liability for suboptimal routing decisions. Tamper-evidence demonstrated by automated test (2026-02-25): modification of any attestation field → InvalidSignature. Integrated online volatility monitoring (Realized Variance, Bipower Variation, CUSUM) operates from the live transaction stream. Compatible with CLS, SWIFT FIN MT 300/202C, ISO 20022 FX (fxtr.014–016), and DeFi-AMM systems. Crypto-agile via GBM-1.
+
+---
+
+*SIGIL-FXBRIDGE · GBM-4 der SIGIL-Patentfamilie (Sovereign Identity-Gated Interaction Layer) · Anmeldedatum 2026-02-25 · Patent Pending · EUPL-1.2*
+*Benjamin Küttner · Garmischerstrasse 46 B · 86163 Augsburg, Deutschland · <benjamin.kuettner@icloud.com> · <ben@sigil-protocol.org>*

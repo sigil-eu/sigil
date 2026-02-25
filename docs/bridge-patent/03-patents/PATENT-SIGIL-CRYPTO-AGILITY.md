@@ -5,7 +5,8 @@
 ## GBM-1 der SIGIL-Patentfamilie
 
 **Anmeldedatum:** 2026-02-25
-**Anmelder:** Benjamin Küttner, [Adresse eintragen]
+**Anmelder:** Benjamin Küttner, Garmischerstrasse 46 B, 86163 Augsburg, Deutschland
+**Kontakt:** <benjamin.kuettner@icloud.com> · <ben@sigil-protocol.org>
 **Priorität / Stammanmeldung:** DE Gebrauchsmuster SIGIL Protocol (GBM-0), eingereicht DPMA 2026-02-23
 **Gilt für:** GBM-0 (SIGIL Protocol), GBM-2 (Bridge Core), GBM-3 (EURO), GBM-4 (FXBridge), GBM-5 (ServiceBridge)
 **Lizenz:** EUPL-1.2 + Kommerzielle Lizenz
@@ -196,4 +197,5 @@ Das Verfahren erweitert das **SIGIL-Protokoll (Sovereign Identity-Gated Interact
 
 ---
 
-*SIGIL CRYPTO-AGILITY · GBM-1 · Sovereign Identity-Gated Interaction Layer · Erweiterung von GBM-0 · 2026-02-25 · Patent Pending · EUPL-1.2*
+*SIGIL CRYPTO-AGILITY · GBM-1 der SIGIL-Patentfamilie (Sovereign Identity-Gated Interaction Layer) · Erweiterung von GBM-0 · Anmeldedatum 2026-02-25 · Patent Pending · EUPL-1.2*
+*Benjamin Küttner · Garmischerstrasse 46 B · 86163 Augsburg, Deutschland · <benjamin.kuettner@icloud.com> · <ben@sigil-protocol.org>*

@@ -161,4 +161,13 @@ Aufbauend auf GBM-0, GBM-1 und GBM-2 implementiert das Protokoll ein offenes, eI
 
 ---
 
-*SIGIL-EURO · GBM-3 · 2026-02-25 · Patent Pending · EUPL-1.2*
+## 5. Englische Zusammenfassung / English Summary
+
+**GBM-3 — SIGIL-EURO · Open, eIDAS-Compliant Payment Protocol for All Participant Classes**
+
+Building on GBM-0, GBM-1, and GBM-2, this protocol implements an open, eIDAS-compliant payment system for all participant classes — central banks, commercial banks, brokers, payment service providers, corporates and private individuals — without requiring individual authorisation by the system operator. Compatibility with ISO 20022, SEPA, T2-RTGS, PSD2, and MiCA is ensured through reference standards. An eIDAS trust level (Low / Substantial / High) is specified as a machine-readable enum field and enforced before every database write. The recipient is represented exclusively as its SHA-256 hash — GDPR Art. 5(1)(c) data minimisation as a design property, not a configuration option. A purely-functional, side-effect-free AML/CTF scanner interface writes only category hashes to the audit log. The three-layer audit trail (HMAC chain + Merkle tree + public DA-layer anchoring) is trustlessly verifiable by any third party. Demonstrated in live operation on 2026-02-24: €15.00 payment, Merkle root anchored in Celestia Mocha Block 10221745. The protocol is DA-layer-agnostic and inherits quantum-resistance from GBM-1.
+
+---
+
+*SIGIL-EURO · GBM-3 der SIGIL-Patentfamilie (Sovereign Identity-Gated Interaction Layer) · Anmeldedatum 2026-02-25 · Patent Pending · EUPL-1.2*
+*Benjamin Küttner · Garmischerstrasse 46 B · 86163 Augsburg, Deutschland · <benjamin.kuettner@icloud.com> · <ben@sigil-protocol.org>*

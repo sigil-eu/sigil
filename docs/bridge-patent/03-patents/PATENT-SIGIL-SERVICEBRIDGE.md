@@ -5,12 +5,14 @@
 ## GBM-5 der SIGIL-Patentfamilie
 
 **Anmeldedatum:** 2026-02-25
-**Anmelder:** Benjamin Küttner, [Adresse eintragen]
+**Anmelder:** Benjamin Küttner, Garmischerstrasse 46 B, 86163 Augsburg, Deutschland
+**Kontakt:** <benjamin.kuettner@icloud.com> · <ben@sigil-protocol.org>
 **Priorität / Stammanmeldungen:**
 
-- GBM-0: DE Gebrauchsmuster SIGIL Protocol, eingereicht DPMA 2026-02-23
+- GBM-0: DE Gebrauchsmuster SIGIL Protocol (Sovereign Identity-Gated Interaction Layer), eingereicht DPMA 2026-02-23
 - GBM-1: DE Gebrauchsmuster SIGIL Crypto-Agility, eingereicht 2026-02-25 (gleichzeitig)
 - GBM-2: DE Gebrauchsmuster SIGIL-Bridge-Core, eingereicht 2026-02-25 (gleichzeitig)
+**EPO-Frist:** 2027-02-23
 **Lizenz:** EUPL-1.2 + Kommerzielle Lizenz
 
 ---
@@ -126,4 +128,13 @@ Aufbauend auf dem SIGIL-Protokoll (GBM-0, DPMA 2026-02-23) und dem SIGIL-Bridge-
 
 ---
 
-*SIGIL-SERVICEBRIDGE · GBM-5 · 2026-02-25 · Patent Pending · EUPL-1.2*
+## 5. Englische Zusammenfassung / English Summary
+
+**GBM-5 — SIGIL-ServiceBridge · DID-Bound Service Escrow with Deterministic Arbitration**
+
+Building on the SIGIL Protocol (GBM-0, Sovereign Identity-Gated Interaction Layer) and the SIGIL-Bridge-Core transfer primitive (GBM-2), this procedure manages service contracts as milestone-bound escrow. Buyer, provider, and arbitrator are identified by W3C DIDs; the arbitrator is bindingly designated at contract inception — not stochastically selected. Every lifecycle transition (Pending → Locked → Delivered → Settled | Disputed → Refunded) is HMAC-chained and append-only. In the event of a dispute, only the pre-agreed, cryptographically authenticated arbitrator may issue a binding decision — deterministic, attributable, non-stochastic. Payment may optionally be processed as a SIGIL-EURO intent (GBM-3) with eIDAS-compliant pseudonymisation and three-layer audit trail. The signature mechanism inherits crypto-agility from GBM-1.
+
+---
+
+*SIGIL-SERVICEBRIDGE · GBM-5 der SIGIL-Patentfamilie (Sovereign Identity-Gated Interaction Layer) · Anmeldedatum 2026-02-25 · Patent Pending · EUPL-1.2*
+*Benjamin Küttner · Garmischerstrasse 46 B · 86163 Augsburg, Deutschland · <benjamin.kuettner@icloud.com> · <ben@sigil-protocol.org>*
