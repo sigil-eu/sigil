@@ -1,0 +1,50 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.MyMolt/sigil-mcp-server",
+  "description": "MCP security middleware: secret scanning, policy enforcement, Ed25519-signed audit. Rust, EUPL-1.2.",
+  "repository": {
+    "url": "https://github.com/sigil-eu/sigil-rs",
+    "source": "github"
+  },
+  "version": "0.1.5",
+  "packages": [
+    {
+      "registryType": "docker",
+      "identifier": "ghcr.io/sigil-eu/sigil-mcp-server",
+      "version": "0.1.5",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "SIGIL_MIN_SEVERITY",
+          "description": "Minimum severity to block (Low/Medium/High/Critical). Default: High.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "name": "SIGIL_OFFLINE",
+          "description": "Run fully offline, no network calls (true/false). Default: true.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "name": "SIGIL_AUDIT_LOG",
+          "description": "Path to tamper-evident audit log file.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "name": "SIGIL_PRIVKEY",
+          "description": "Ed25519 private key seed (hex) for signing. Auto-generated if unset.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}
