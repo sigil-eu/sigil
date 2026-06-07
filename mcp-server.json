@@ -1,0 +1,52 @@
+{
+  "name": "sigil-mcp-server",
+  "version": "0.1.5",
+  "description": "SIGIL — Sovereign Identity-Gated Interaction Layer. Security middleware for AI agent tool calls: secret scanning, trust-level policy enforcement, Ed25519-signed audit envelopes.",
+  "license": "EUPL-1.2",
+  "repository": "https://github.com/sigil-eu/sigil-rs",
+  "homepage": "https://sigil-protocol.org",
+  "transport": ["stdio"],
+  "runtimes": ["docker", "native"],
+  "tools": [
+    {
+      "name": "scan",
+      "description": "Scan arbitrary text for security issues: leaked secrets (AWS keys, OpenAI tokens, GitHub PATs, RSA private keys), PII patterns, and prompt injection attempts. Returns hit, pattern, severity, and blocked status."
+    },
+    {
+      "name": "ping",
+      "description": "Health check. Returns server version, SIGIL DID method, license, and beta1=0 invariant."
+    }
+  ],
+  "docker": {
+    "image": "ghcr.io/sigil-eu/sigil-mcp-server",
+    "tag": "latest",
+    "run": ["run", "-i", "--rm", "ghcr.io/sigil-eu/sigil-mcp-server:latest"]
+  },
+  "install": {
+    "cargo": "cargo install --git https://github.com/sigil-eu/sigil-rs --bin sigil-mcp-server",
+    "docker": "docker pull ghcr.io/sigil-eu/sigil-mcp-server:latest"
+  },
+  "claude_desktop": {
+    "mcpServers": {
+      "sigil": {
+        "command": "docker",
+        "args": ["run", "-i", "--rm", "ghcr.io/sigil-eu/sigil-mcp-server:latest"],
+        "env": {
+          "SIGIL_MIN_SEVERITY": "High",
+          "SIGIL_OFFLINE": "true"
+        }
+      }
+    }
+  },
+  "identity": {
+    "did_method": "did:sigil",
+    "providers": ["GitHub", "Google", "Apple", "eIDAS-2.0"],
+    "auto_issue": true
+  },
+  "security": {
+    "patterns": 43,
+    "categories": ["secrets", "pii", "prompt_injection", "sql_injection"],
+    "signing": "ed25519",
+    "audit": "tamper-evident hash chain"
+  }
+}
